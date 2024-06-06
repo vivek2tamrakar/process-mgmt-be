@@ -1,6 +1,8 @@
-import { Exclude } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
 import { IsNotEmpty } from "class-validator";
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { FolderModel } from "./FolderModel";
+import { AssignModel } from "./AssignModel";
 
 @Entity({name:'group'})
 export class GroupModel extends BaseEntity {
@@ -28,4 +30,14 @@ export class GroupModel extends BaseEntity {
     @Exclude({ toClassOnly: true })
     @UpdateDateColumn({ name: 'updated_at' })
     public readonly updatedAt: Date;
+
+    @Type(() => FolderModel)
+    @Expose()
+    @OneToMany(type => FolderModel, folderModel => folderModel.groupModel)
+    public folder: FolderModel;
+
+    @Type(() => AssignModel)
+    @Expose()
+    @OneToMany(type => AssignModel, assignModel => assignModel.groupmodel)
+    public assign: AssignModel;
 } 

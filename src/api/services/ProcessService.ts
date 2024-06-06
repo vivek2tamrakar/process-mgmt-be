@@ -19,5 +19,11 @@ export class ProcessService {
         return await this.processRepository.save(body);
     }
 
+        /* --------------------- process list ------------------*/
+        public async processList(userId: number): Promise<ProcessModel[]> {
+            this.log.info(`get process list ${userId}`)
+            return await this.processRepository.processList(userId);
+        }
+
 
 }

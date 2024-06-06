@@ -5,8 +5,8 @@ import { GroupModel } from "../models/GroupModel";
 import { LoggerInterface } from "../../lib/logger";
 import { Logger } from "../../decorators/Logger";
 import { GroupError } from "../errors/Group";
-import { UserRepository } from "../repositories/UserRepository";
 import { FolderRepository } from "../repositories/FolderRepository";
+import { ProcessRepository } from "../repositories/ProcessRepository";
 
 @Service()
 export class GroupService {
@@ -14,8 +14,8 @@ export class GroupService {
     constructor(
         @Logger(__filename) private log: LoggerInterface,
         @OrmRepository() private groupRepository: GroupRepository,
-        @OrmRepository() private userRepository: UserRepository,
         @OrmRepository() private folderRepository: FolderRepository,
+        @OrmRepository() private processRepository: ProcessRepository
     ) { }
 
     /* ------------------ add group by company------------------ */
@@ -23,16 +23,29 @@ export class GroupService {
         this.log.info(`add water tracker by user ${body}`)
         let isGroupNameAlreadyExist = await this.groupRepository.findOne({ name: body?.name })
         if (isGroupNameAlreadyExist) throw new GroupError;
-        body.userId = id
+        body.userId = id;
         return await this.groupRepository.save(body);
     }
 
     /* ---------------------- group list ------------------ */
-    public async getGroup(params: any): Promise<GroupModel[] | any> {
+    public async getGroup(userId: number): Promise<GroupModel[] | any> {
         this.log.info(`get group list`)
-        const group = await this.groupRepository.getGroupList(params)
-        const user = await this.userRepository.getUserList(params)
-        const folder = await this.folderRepository.getFolderList(params)
-        return { group, user, folder }
+        const group = await this.groupRepository.getGroupList(userId)
+        const folder = await this.folderRepository.getFolderList(userId)
+        const process = await this.processRepository.getProcessList(userId);
+        return { group, folder, process }
     }
+
+    /* ---------------------- group list ------------------ */
+    public async groupList(userId: number): Promise<GroupModel[] | any> {
+        this.log.info(`get group list`)
+        return await this.groupRepository.groupList(userId)
+    }
+
+    /* ---------------------- assign groups user ------------ */
+    public async assignGroupsUser(groupId: number): Promise<GroupModel> {
+        this.log.info(`get group list`)
+        return await this.groupRepository.assignGroupsUser(groupId)
+    }
+
 }

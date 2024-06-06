@@ -14,6 +14,7 @@ dotenv.config({ path: path.join(process.cwd(), `.env${((process.env.NODE_ENV ===
 /**
  * Environment variables
  */
+const useSMTP = getOsEnv('USE_SMTP');
 export const env = {
     node: process.env.NODE_ENV || 'development',
     isProduction: process.env.NODE_ENV === 'production',
@@ -44,6 +45,15 @@ export const env = {
             subscribers: getOsPaths('SUBSCRIBERS'),
             resolvers: getOsPaths('RESOLVERS'),
         },
+    }, email: {
+        use_smtp: getOsEnv('USE_SMTP'),
+        serviceName: (useSMTP && useSMTP === 'gmail') ? getOsEnv('EMAIL_SERVICE_NAME') : getOsEnv('OUTLOOK_EMAIL_SERVICE_NAME'),
+        serviceHost: (useSMTP && useSMTP === 'gmail') ? getOsEnv('EMAIL_SERVICE_HOST') : getOsEnv('OUTLOOK_EMAIL_SERVICE_HOST'),
+        userName: (useSMTP && useSMTP === 'gmail') ? getOsEnv('EMAIL_USER_NAME') : getOsEnv('OUTLOOK_EMAIL_USER_NAME'),
+        to: (useSMTP && useSMTP === 'gmail') ? getOsEnv('EMAIL_TO_NAME') : getOsEnv('OUTLOOK_EMAIL_TO_NAME'),
+        userPassword: (useSMTP && useSMTP === 'gmail') ? getOsEnv('EMAIL_USER_PASSWORD') : getOsEnv('OUTLOOK_EMAIL_USER_PASSWORD'),
+        isSecure: getOsEnv('EMAIL_SERVICE_SECURE'),
+        servicePort: getOsEnv('EMAIL_SERVICE_PORT'),
     },
     log: {
         level: getOsEnv('LOG_LEVEL'),
