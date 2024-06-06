@@ -1,6 +1,6 @@
 import { classToPlain } from 'class-transformer';
 import * as express from 'express';
-import { RefreshTokenError } from '../api/errors/User';
+import { LoginError, RefreshTokenError } from '../api/errors/User';
 import { Service } from 'typedi';
 import { OrmRepository } from 'typeorm-typedi-extensions';
 import { JwtService } from './JwtService';
@@ -40,6 +40,7 @@ export class AuthService {
 
     public async login(username: string, password: string,res:any): Promise<any> {
         const dbUser = await this.userRepository.findOne({ email: username });
+        if(!dbUser.isActive) throw new LoginError()
         if (dbUser) {
             const isCorrectPassword = await UserModel.comparePassword(dbUser, password);
             if (isCorrectPassword) {

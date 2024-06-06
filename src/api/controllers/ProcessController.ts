@@ -1,9 +1,10 @@
-import { Authorized, Body, JsonController, Post, Req } from "routing-controllers";
+import { Authorized, Body, Get, JsonController, Post, Req } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { ProcessService } from "../services/ProcessService";
 import { UserRoles } from "../enums/Users";
 import { ProcessModel } from "../models/ProcessModel";
+import { DecodeTokenService } from "../services/DecodeTokenService";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/process')
@@ -11,15 +12,28 @@ import { ProcessModel } from "../models/ProcessModel";
 export class ProcessController {
     constructor(
         @Service() private processService: ProcessService,
+        @Service() private decodeTokenService: DecodeTokenService
     ) {
     }
 
-    @Authorized([UserRoles.COMPANY,UserRoles.ADMIN])
+    @Authorized(UserRoles.COMPANY)
+    @Get('/list')
+    @ResponseSchema(ProcessModel, {
+        description: 'list of companies user',
+        isArray: true
+    })
+    public async processList(@Req() req: any): Promise<ProcessModel[]> {
+        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
+        let userId = decodedToken?.id;
+        return await this.processService.processList(userId)
+    }
+
+    @Authorized([UserRoles.COMPANY, UserRoles.ADMIN])
     @Post('/')
     @ResponseSchema(ProcessModel, {
         description: 'add process by company'
     })
-    public async addProcess(@Body() body: any, @Req() req: any): Promise<ProcessModel> {
+    public async addProcess(@Body() body: any): Promise<ProcessModel> {
         return await this.processService.addProcess(body)
     }
 }

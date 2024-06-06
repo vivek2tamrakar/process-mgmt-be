@@ -1,4 +1,4 @@
-import {HttpError} from 'routing-controllers';
+import { HttpError } from 'routing-controllers';
 
 export class RefreshTokenError extends HttpError {
     constructor() {
@@ -6,17 +6,24 @@ export class RefreshTokenError extends HttpError {
     }
 }
 
-export class UserError extends HttpError{
+export class UserError extends HttpError {
 
-    constructor(){
+    constructor() {
         super(406, 'MOBILE_NUMBER_ALREADY_EXIST');
     }
 }
 
 
-export class CompanyError extends HttpError{
+export class CompanyError extends HttpError {
 
-    constructor(){
+    constructor() {
         super(406, 'COMPANY_NAME_ALREADY_EXIST');
     }
+}
+
+export class LoginError extends HttpError {
+    constructor() {
+        super(400, 'CAN_NOT_LOGIN')
+    }
+
 }

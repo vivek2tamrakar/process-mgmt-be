@@ -13,6 +13,12 @@ export class FolderService {
         @OrmRepository() private folderRepository: FolderRepository,
     ) { }
 
+    /* --------------------- folder list ------------------*/
+    public async folderList(userId: number): Promise<FolderModel[]> {
+        this.log.info(`get folder list ${userId}`)
+        return await this.folderRepository.folderList(userId);
+    }
+
     /* ------------------ add folder ------------------ */
     public async addFolder(body: any): Promise<FolderModel> {
         this.log.info(`add folder ${body}`)

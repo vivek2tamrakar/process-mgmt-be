@@ -1,4 +1,4 @@
-import { Authorized, Body, JsonController, Post, Req } from "routing-controllers";
+import { Authorized, Body, Get, JsonController, Param, Post, Req } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { UserService } from "../services/UserService";
@@ -14,6 +14,16 @@ export class UserController {
         @Service() private userService: UserService,
         @Service() private decodeTokenService: DecodeTokenService
     ) {
+    }
+
+    @Authorized(UserRoles.COMPANY)
+    @Get('/list/:companyId')
+    @ResponseSchema(UserModel, {
+        description: 'list of companies user',
+        isArray: true
+    })
+    public async companyUserList(@Param('companyId') companyId: number): Promise<UserModel[]> {
+        return await this.userService.companyUserList(companyId)
     }
 
     @Post('/company')

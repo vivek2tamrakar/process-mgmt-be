@@ -1,22 +1,22 @@
 import { Exclude, Type } from "class-transformer";
 import { IsNotEmpty, IsOptional } from "class-validator";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { FolderModel } from "./FolderModel";
+import { GroupModel } from "./GroupModel";
+import { UserModel } from "./UserModel";
 
-
-@Entity({ name: 'process' })
-export class ProcessModel extends BaseEntity {
+@Entity({ name: 'assign' })
+export class AssignModel extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     public id: number;
 
     @IsNotEmpty()
-    @Column({ name: 'name' })
-    public name: string;
-
-    @IsOptional()
     @Column({ name: 'user_id' })
     public userId: number;
+
+    @IsNotEmpty()
+    @Column({ name: 'assign_user_id' })
+    public assignUserId: number;
 
     @IsOptional()
     @Column({ name: 'group_id' })
@@ -25,6 +25,10 @@ export class ProcessModel extends BaseEntity {
     @IsOptional()
     @Column({ name: 'folder_id' })
     public folderId: number;
+
+    @IsOptional()
+    @Column({ name: 'process_id' })
+    public processId: number;
 
     @Exclude()
     @Exclude({ toClassOnly: true })
@@ -39,9 +43,12 @@ export class ProcessModel extends BaseEntity {
     @UpdateDateColumn({ name: 'updated_at' })
     public readonly updatedAt: Date;
 
+    @Type(() => GroupModel)
+    @OneToOne(type => GroupModel, groupModel => groupModel.assign, { cascade: true })
+    @JoinColumn({ name: 'group_id' })
+    public groupmodel: GroupModel;
 
-    @Type(() => FolderModel)
-    @OneToOne(type => FolderModel, FolderModel => FolderModel.process, { cascade: true })
-    @JoinColumn({ name: 'folder_id' })
-    public folderModel: FolderModel;
-}
+    @JoinColumn({ name: 'assign_user_id' })
+    @OneToOne(type =>UserModel , userModel => userModel.id)
+    public user: UserModel
+} 
