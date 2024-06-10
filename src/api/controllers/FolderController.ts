@@ -1,10 +1,11 @@
-import { Authorized, Body, Get, JsonController, Post, Req } from "routing-controllers";
+import { Authorized, Body, Get, JsonController, Param, Post, Req } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { FolderService } from "../services/FolderService";
 import { UserRoles } from "../enums/Users";
 import { FolderModel } from "../models/FolderModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
+import { Request } from "express";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/folder')
@@ -22,19 +23,29 @@ export class FolderController {
         description: 'list of companies user',
         isArray: true
     })
-    public async folderList(@Req() req: any): Promise<FolderModel[]> {
+    public async folderList(@Req() req: Request): Promise<FolderModel[]> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         let userId = decodedToken?.id;
         return await this.folderService.folderList(userId)
     }
 
+    @Authorized(UserRoles.COMPANY)
+    @Get('/:id')
+    @ResponseSchema(FolderModel, {
+        description: 'get folder data by id'
+    })
+    public async folderDataById(@Param('id') id: number): Promise<FolderModel> {
+        return await this.folderService.folderDataById(id)
+    }
 
     @Authorized([UserRoles.COMPANY, UserRoles.ADMIN])
     @Post('/')
     @ResponseSchema(FolderModel, {
         description: 'add folder by user'
     })
-    public async addFolder(@Body() body: any): Promise<FolderModel> {
+    public async addFolder(@Body() body: any, @Req() req: Request): Promise<FolderModel> {
+        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
+        body.userId = decodedToken?.id;
         return await this.folderService.addFolder(body)
     }
 }

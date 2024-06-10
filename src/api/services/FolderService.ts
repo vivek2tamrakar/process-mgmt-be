@@ -24,4 +24,12 @@ export class FolderService {
         this.log.info(`add folder ${body}`)
         return await this.folderRepository.save(body)
     }
+
+    /* ------------------ folder data by id ------------------ */
+    public async folderDataById(id: number): Promise<FolderModel> {
+        this.log.info(`get folder data by id`)
+        return await this.folderRepository.folderDataById(id)
+    }
+
+
 }

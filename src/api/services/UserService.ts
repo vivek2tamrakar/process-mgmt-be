@@ -4,7 +4,7 @@ import { UserRepository } from "../repositories/UserRepository";
 import { UserModel } from "../models/UserModel";
 import { LoggerInterface } from "../../lib/logger";
 import { Logger } from "../../decorators/Logger";
-import { CompanyError, UserError } from "../errors/User";
+import { CompanyError, EmailError } from "../errors/User";
 // import { AdminMail } from "../../mailers/userMailer";
 
 @Service()
@@ -22,13 +22,12 @@ export class UserService {
     }
 
     /* ------------------ add user of the company------------------ */
-    public async addUser(body: any): Promise<UserModel> {
+    public async addUser(body: any, token: string): Promise<UserModel> {
+        // token = token.split(' ')[1];
         this.log.info(`add user of the company ${body}`)
         const isExistEmail = await this.userRepository.findOne({ email: body?.email });
-        if (isExistEmail) throw new UserError()
-        // await AdminMail(body?.email, body?.password)
-        // const hashpassword = await UserModel.hashPassword(body?.password);
-        // body.password = hashpassword;
+        if (isExistEmail) throw new EmailError()
+        // await AdminMail(body?.email, token)
         // body.isActive = false;
         return await this.userRepository.save(body);
     }
