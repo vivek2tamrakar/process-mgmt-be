@@ -3,6 +3,7 @@ import { IsNotEmpty } from "class-validator";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { FolderModel } from "./FolderModel";
 import { AssignModel } from "./AssignModel";
+import { ProcessModel } from "./ProcessModel";
 
 @Entity({name:'group'})
 export class GroupModel extends BaseEntity {
@@ -40,4 +41,9 @@ export class GroupModel extends BaseEntity {
     @Expose()
     @OneToMany(type => AssignModel, assignModel => assignModel.groupmodel)
     public assign: AssignModel;
+
+    @Type(() => ProcessModel)
+    @Expose()
+    @OneToMany(type => ProcessModel, processModel => processModel.processModel)
+    public proces: ProcessModel;
 } 

@@ -18,4 +18,23 @@ export class AssignService {
         return await this.assignRepository.save(body);
     }
 
+    /* ------------------ edit members user by the company------------------ */
+    public async editMembers(body: any): Promise<AssignModel> {
+        this.log.info(`edit members  ${body}`)
+        let key = body.groupId ? 'groupId' : body.folderId ? 'folderId' : 'processId';
+        const value = body[key];
+        const existingRecord = await this.assignRepository.find({ [key]: value });
+        if (existingRecord?.length)
+            await this.assignRepository.delete({ [key]: value });
+        const newAssignments = body?.assignUserId?.map((ele) => ({
+            assignUserId: ele,
+            [key]: value,
+            userId: body?.userId
+        }));
+        return await this.assignRepository.save(newAssignments);
+    }
+
+
+
+
 }

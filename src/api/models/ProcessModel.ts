@@ -2,6 +2,7 @@ import { Exclude, Type } from "class-transformer";
 import { IsNotEmpty, IsOptional } from "class-validator";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { FolderModel } from "./FolderModel";
+import { GroupModel } from "./GroupModel";
 
 
 @Entity({ name: 'process' })
@@ -44,4 +45,9 @@ export class ProcessModel extends BaseEntity {
     @OneToOne(type => FolderModel, FolderModel => FolderModel.process, { cascade: true })
     @JoinColumn({ name: 'folder_id' })
     public folderModel: FolderModel;
+
+    @Type(() => GroupModel)
+    @OneToOne(type => GroupModel, groupModel => groupModel.proces, { cascade: true })
+    @JoinColumn({ name: 'group_id' })
+    public processModel: GroupModel;
 }
