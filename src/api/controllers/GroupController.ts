@@ -5,6 +5,7 @@ import { GroupService } from "../services/GroupService";
 import { UserRoles } from "../enums/Users";
 import { GroupModel } from "../models/GroupModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
+import { Request } from "express";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/group')
@@ -22,7 +23,7 @@ export class GroupController {
         description: 'get Group List',
         isArray: true
     })
-    public async groupList(@Req() req: any): Promise<GroupModel[]> {
+    public async groupList(@Req() req: Request): Promise<GroupModel[]> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         let userId = decodedToken?.id;
         return await this.groupService.groupList(userId);
@@ -34,7 +35,7 @@ export class GroupController {
         description: 'get Group List',
         isArray: true
     })
-    public async getGroup(@Req() req: any): Promise<GroupModel[]> {
+    public async getGroup(@Req() req: Request): Promise<GroupModel[]> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         let userId = decodedToken?.id;
         return await this.groupService.getGroup(userId);
@@ -55,7 +56,7 @@ export class GroupController {
     @ResponseSchema(GroupModel, {
         description: 'add group by company'
     })
-    public async addGroup(@Body() body: any, @Req() req: any): Promise<GroupModel> {
+    public async addGroup(@Body() body: any, @Req() req: Request): Promise<GroupModel> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         let id = decodedToken?.id;
         return await this.groupService.addGroup(body, id)

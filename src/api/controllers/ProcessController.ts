@@ -5,6 +5,7 @@ import { ProcessService } from "../services/ProcessService";
 import { UserRoles } from "../enums/Users";
 import { ProcessModel } from "../models/ProcessModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
+import { Request } from "express";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/process')
@@ -22,18 +23,20 @@ export class ProcessController {
         description: 'list of companies user',
         isArray: true
     })
-    public async processList(@Req() req: any): Promise<ProcessModel[]> {
+    public async processList(@Req() req: Request): Promise<ProcessModel[]> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         let userId = decodedToken?.id;
         return await this.processService.processList(userId)
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.ADMIN])
+    @Authorized(UserRoles.COMPANY)
     @Post('/')
     @ResponseSchema(ProcessModel, {
         description: 'add process by company'
     })
-    public async addProcess(@Body() body: any): Promise<ProcessModel> {
+    public async addProcess(@Body() body: any, @Req() req: Request): Promise<ProcessModel> {
+        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
+        body.userId = decodedToken?.id;
         return await this.processService.addProcess(body)
     }
 }

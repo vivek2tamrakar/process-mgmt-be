@@ -5,6 +5,7 @@ import { UserService } from "../services/UserService";
 import { UserRoles } from "../enums/Users";
 import { UserModel } from "../models/UserModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
+import { Request } from "express";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/users')
@@ -30,7 +31,7 @@ export class UserController {
     @ResponseSchema(UserModel, {
         description: 'add company'
     })
-    public async addCompany(@Body() body: any, @Req() req: any): Promise<UserModel> {
+    public async addCompany(@Body() body: any): Promise<UserModel> {
         return await this.userService.addCompany(body);
     }
 
@@ -39,10 +40,10 @@ export class UserController {
     @ResponseSchema(UserModel, {
         description: 'add user of company'
     })
-    public async addUser(@Body() body: any, @Req() req: any): Promise<UserModel> {
+    public async addUser(@Body() body: any, @Req() req: Request): Promise<UserModel> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         body.createdById = decodedToken?.id;
-        return await this.userService.addUser(body);
+        return await this.userService.addUser(body, req.headers['authorization']);
     }
 
 }

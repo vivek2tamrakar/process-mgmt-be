@@ -6,10 +6,10 @@ export class RefreshTokenError extends HttpError {
     }
 }
 
-export class UserError extends HttpError {
+export class EmailError extends HttpError {
 
     constructor() {
-        super(406, 'MOBILE_NUMBER_ALREADY_EXIST');
+        super(406, 'EMAIL_ALREADY_EXIST');
     }
 }
 

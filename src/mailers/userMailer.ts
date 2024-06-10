@@ -10,7 +10,7 @@ export const AdminMail = (dbUser: any, data?: any) => {
         subject: 'INVITATION',
         template,
         context: {
-            password: data,
+            token: `http://${env.app.host}:${env.app.port}/api/users/verify/${data}`,
         }
     };
     Transport().sendMail(helperOptions, (error, info) => {
