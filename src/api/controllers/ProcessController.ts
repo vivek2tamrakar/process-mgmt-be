@@ -1,11 +1,11 @@
-import { Authorized, Body, Get, JsonController, Post, Req } from "routing-controllers";
+import { Authorized, Body, Delete, Get, JsonController, Param, Post, Req, Res } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { ProcessService } from "../services/ProcessService";
 import { UserRoles } from "../enums/Users";
 import { ProcessModel } from "../models/ProcessModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
-import { Request } from "express";
+import { Request,Response } from "express";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/process')
@@ -39,4 +39,15 @@ export class ProcessController {
         body.userId = decodedToken?.id;
         return await this.processService.addProcess(body)
     }
+
+    @Authorized(UserRoles.COMPANY)
+    @Delete('/:id')
+    @ResponseSchema(ProcessModel, {
+        description: 'delete process'
+    })
+    public async deleteProcess(@Param('id') id: number, @Res() res: Response): Promise<ProcessModel> {
+        return await this.processService.deleteProcess(id, res)
+    }
+
+
 }

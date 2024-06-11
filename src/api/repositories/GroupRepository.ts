@@ -11,12 +11,14 @@ export class GroupRepository extends Repository<GroupModel> {
                 'folder.id', 'folder.name', 'folder.createdAt',
                 'process.id', 'process.name', 'process.createdAt',
                 'proces.id', 'proces.name', 'proces.createdAt',
-                
-
+                'assign.id',
+                'user.id', 'user.email'
             ])
             .leftJoin('group.folder', 'folder')
             .leftJoin('folder.process', 'process')
             .leftJoin('group.proces', 'proces')
+            .leftJoin('group.assign', 'assign')
+            .leftJoin('assign.user', 'user')
             .andWhere('group.user_id =:userId', { userId: userId })
         return qb.getMany()
     }

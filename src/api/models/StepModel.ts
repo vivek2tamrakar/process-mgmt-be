@@ -1,0 +1,35 @@
+import { Exclude } from "class-transformer";
+import { IsNotEmpty } from "class-validator";
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+
+@Entity({ name: 'step' })
+export class StepModel extends BaseEntity {
+
+    @PrimaryGeneratedColumn()
+    public id: number;
+
+    @IsNotEmpty()
+    @Column({ name: 'process_id' })
+    public processId: number;
+
+    @IsNotEmpty()
+    @Column({ name: 'step' })
+    public step: string;
+
+    @IsNotEmpty()
+    @Column({ name: 'step_description' })
+    public stepDescription: string;
+
+    @Exclude({ toClassOnly: true })
+    @CreateDateColumn({ name: 'created_at' })
+    public readonly createdAt: Date;
+
+    @Exclude({ toClassOnly: true })
+    @CreateDateColumn({ name: 'updated_at' })
+    public readonly updatedAt: Date;
+
+    @Exclude({ toClassOnly: true })
+    @CreateDateColumn({ name: 'deleted_at' })
+    public readonly deletedAt: Date;
+
+}
