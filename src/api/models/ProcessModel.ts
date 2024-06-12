@@ -27,6 +27,14 @@ export class ProcessModel extends BaseEntity {
     @Column({ name: 'folder_id' })
     public folderId: number;
 
+    @IsNotEmpty()
+    @Column({ name: 'tags' })
+    public tags: string;
+
+    @IsNotEmpty()
+    @Column({ name: 'description' })
+    public description: string;
+
     @Exclude()
     @Exclude({ toClassOnly: true })
     @DeleteDateColumn({ name: 'deleted_at' })

@@ -17,7 +17,7 @@ export class ProcessService {
     ) { }
 
     /* ------------------ add process------------------ */
-    public async addProcess(body: any): Promise<ProcessModel> {
+    public async addProcess(body: any): Promise<ProcessModel | any> {
         this.log.info(`add process ${body}`)
         let isGroupExist, groupData, criteria;
         if (body?.groupId) criteria = { groupId: body?.groupId, name: body?.name }
@@ -26,10 +26,11 @@ export class ProcessService {
         isGroupExist = await this.findProcess(criteria);
         if (isGroupExist) body.processId = isGroupExist?.id
         else {
+            body.tags = JSON.stringify(body?.tags);
             groupData = await this.processRepository.save(body);
             body.processId = groupData?.id
         }
-        return await this.stepRepository.save(body);
+        return await this.stepRepository.save({ step: body?.step, stepDescription: body?.stepDescription, processId: body?.processId });
     }
 
     public async findProcess(data: any): Promise<ProcessModel> {

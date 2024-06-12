@@ -36,7 +36,7 @@ export class steps1718101922612 implements MigrationInterface {
                     isPrimary: false,
                     default: 'CURRENT_TIMESTAMP'
                 }, {
-                    name: 'updted_at',
+                    name: 'updated_at',
                     type: 'timestamp',
                     isPrimary: false,
                     isNullable: true,
