@@ -1,11 +1,11 @@
-import { Authorized, Body, Get, JsonController, Param, Post, Req } from "routing-controllers";
+import { Authorized, Body, Delete, Get, JsonController, Param, Post, Req, Res } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { FolderService } from "../services/FolderService";
 import { UserRoles } from "../enums/Users";
 import { FolderModel } from "../models/FolderModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
-import { Request } from "express";
+import { Request, Response } from "express";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/folder')
@@ -48,4 +48,15 @@ export class FolderController {
         body.userId = decodedToken?.id;
         return await this.folderService.addFolder(body)
     }
+
+    @Authorized(UserRoles.COMPANY)
+    @Delete('/:id')
+    @ResponseSchema(FolderModel, {
+        description: 'delete folder'
+    })
+    public async deleteFolder(@Param('id') id: number, @Res() res: Response): Promise<FolderModel> {
+        return await this.folderService.deleteFolder(id, res)
+    }
+
+
 }

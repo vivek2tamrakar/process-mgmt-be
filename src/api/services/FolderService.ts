@@ -31,5 +31,11 @@ export class FolderService {
         return await this.folderRepository.folderDataById(id)
     }
 
+    /* ---------------------- delete folder ------------ */
+    public async deleteFolder(folderId: number, res: any): Promise<FolderModel> {
+        this.log.info(`delete folder ${folderId}`)
+        await this.folderRepository.softDelete(folderId)
+        return res.status(200).send({ sucess: true, MESSAGE: 'SUCCESSFULLY_DELETE' })
+    }
 
 }
