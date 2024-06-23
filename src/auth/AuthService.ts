@@ -40,6 +40,7 @@ export class AuthService {
 
     public async login(username: string, password: string,res:any): Promise<any> {
         const dbUser = await this.userRepository.findOne({ email: username });
+        console.log('dbUser',dbUser);
         if(!dbUser.isActive) throw new LoginError()
         if (dbUser) {
             const isCorrectPassword = await UserModel.comparePassword(dbUser, password);
