@@ -1,8 +1,9 @@
-import { Exclude, Type } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
 import { IsNotEmpty, IsOptional } from "class-validator";
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { FolderModel } from "./FolderModel";
 import { GroupModel } from "./GroupModel";
+import { StepModel } from "./StepModel";
 
 
 @Entity({ name: 'process' })
@@ -58,4 +59,11 @@ export class ProcessModel extends BaseEntity {
     @OneToOne(type => GroupModel, groupModel => groupModel.proces, { cascade: true })
     @JoinColumn({ name: 'group_id' })
     public processModel: GroupModel;
+
+    @Type(() => StepModel)
+    @Expose()
+    @OneToMany(type => StepModel, stepModel => stepModel.process)
+    public step: StepModel;
+
+    
 }

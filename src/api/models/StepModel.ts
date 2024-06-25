@@ -1,6 +1,7 @@
-import { Exclude } from "class-transformer";
+import { Exclude, Type } from "class-transformer";
 import { IsNotEmpty } from "class-validator";
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ProcessModel } from "./ProcessModel";
 
 @Entity({ name: 'step' })
 export class StepModel extends BaseEntity {
@@ -32,4 +33,10 @@ export class StepModel extends BaseEntity {
     @CreateDateColumn({ name: 'deleted_at' })
     public readonly deletedAt: Date;
 
+    @Type(() => ProcessModel)
+    @OneToOne(type => ProcessModel, processModel => processModel.step, { cascade: true })
+    @JoinColumn({ name: 'process_id' })
+    public process: ProcessModel;
+
+    
 }

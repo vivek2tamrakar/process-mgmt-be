@@ -5,19 +5,15 @@ import { FolderModel } from "../models/FolderModel";
 import { LoggerInterface } from "../../lib/logger";
 import { Logger } from "../../decorators/Logger";
 
+
 @Service()
 export class FolderService {
 
     constructor(
         @Logger(__filename) private log: LoggerInterface,
         @OrmRepository() private folderRepository: FolderRepository,
-    ) { }
 
-    /* --------------------- folder list ------------------*/
-    public async folderList(userId: number): Promise<FolderModel[]> {
-        this.log.info(`get folder list ${userId}`)
-        return await this.folderRepository.folderList(userId);
-    }
+    ) { }
 
     /* ------------------ add folder ------------------ */
     public async addFolder(body: any): Promise<FolderModel> {
@@ -37,5 +33,8 @@ export class FolderService {
         await this.folderRepository.softDelete(folderId)
         return res.status(200).send({ sucess: true, MESSAGE: 'SUCCESSFULLY_DELETE' })
     }
+
+   
+
 
 }
