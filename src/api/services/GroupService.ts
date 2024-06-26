@@ -36,12 +36,6 @@ export class GroupService {
         return { group, folder, process }
     }
 
-    /* ---------------------- group list ------------------ */
-    public async groupList(userId: number): Promise<GroupModel[] | any> {
-        this.log.info(`get group list`)
-        return await this.groupRepository.groupList(userId)
-    }
-
     /* ---------------------- assign groups user ------------ */
     public async assignGroupsUser(groupId: number): Promise<GroupModel> {
         this.log.info(`get group list`)

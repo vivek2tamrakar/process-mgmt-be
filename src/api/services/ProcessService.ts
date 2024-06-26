@@ -5,6 +5,7 @@ import { OrmRepository } from "typeorm-typedi-extensions";
 import { ProcessModel } from "../models/ProcessModel";
 import { ProcessRepository } from "../repositories/ProcessRepository";
 import { StepRepository } from "../repositories/StepRepository";
+import { NotFound } from "../errors/Group";
 
 
 @Service()
@@ -19,28 +20,12 @@ export class ProcessService {
     /* ------------------ add process------------------ */
     public async addProcess(body: any): Promise<ProcessModel | any> {
         this.log.info(`add process ${body}`)
-        let isGroupExist, groupData, criteria;
-        if (body?.groupId) criteria = { groupId: body?.groupId, name: body?.name }
-        else if (body?.folderId) criteria = { folderId: body?.folderId, name: body?.name }
-        else criteria = { userId: body?.userId, name: body?.name }
-        isGroupExist = await this.findProcess(criteria);
-        if (isGroupExist) body.processId = isGroupExist?.id
-        else {
-            body.tags = JSON.stringify(body?.tags);
-            groupData = await this.processRepository.save(body);
-            body.processId = groupData?.id
-        }
-        return await this.stepRepository.save({ step: body?.step, stepDescription: body?.stepDescription, processId: body?.processId });
-    }
-
-    public async findProcess(data: any): Promise<ProcessModel> {
-        return await this.processRepository.findOne(data)
-    }
-
-    /* --------------------- process list ------------------*/
-    public async processList(userId: number): Promise<ProcessModel[]> {
-        this.log.info(`get process list ${userId}`)
-        return await this.processRepository.processList(userId);
+        body.tags = JSON.stringify(body?.tags);
+        let processData = await this.processRepository.save(body);
+        let modifyData = body?.step?.map((ele, index) => {
+            return { processId: processData?.id, step: ele, stepDescription: body?.stepDescription[index] }
+        })
+        return await this.stepRepository.save(modifyData);
     }
 
     /* ---------------------- delete process ------------ */
@@ -48,6 +33,25 @@ export class ProcessService {
         this.log.info(`delete process by ${processId}`)
         await this.processRepository.softDelete(processId)
         return res.status(200).send({ sucess: true, MESSAGE: 'SUCCESSFULLY_DELETE' })
+    }
+
+
+    /* ------------------- get processData by id ---------- */
+    public async processDataById(processId: number): Promise<ProcessModel> {
+        this.log.info(`get process data by id ${processId}`)
+        return await this.processRepository.processDataById(processId)
+    }
+
+    /* ---------------- update process --------------- */
+    public async updateProcess(body): Promise<ProcessModel> {
+        this.log.info(`update process data by id ${body}`)
+        const isProcessExist = await this.processRepository.findOne({ id: body?.id });
+        if (!isProcessExist) throw new NotFound();
+        await this.stepRepository.delete({ processId: body?.id })
+        let modifyData = body?.step?.map((ele, index) => {
+            return { processId: body?.id, step: ele, stepDescription: body?.stepDescription[index] }
+        })
+        return await this.stepRepository.save(modifyData);
     }
 
 

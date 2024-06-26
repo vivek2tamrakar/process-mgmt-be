@@ -6,6 +6,8 @@ import { UserRoles } from "../enums/Users";
 import { FolderModel } from "../models/FolderModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
 import { Request, Response } from "express";
+import { folderReq } from "./requests/Folder";
+import { validateOrReject } from "class-validator";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/folder')
@@ -15,18 +17,6 @@ export class FolderController {
         @Service() private folderService: FolderService,
         @Service() private decodeTokenService: DecodeTokenService
     ) {
-    }
-
-    @Authorized(UserRoles.COMPANY)
-    @Get('/list')
-    @ResponseSchema(FolderModel, {
-        description: 'list of companies user',
-        isArray: true
-    })
-    public async folderList(@Req() req: Request): Promise<FolderModel[]> {
-        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
-        let userId = decodedToken?.id;
-        return await this.folderService.folderList(userId)
     }
 
     @Authorized(UserRoles.COMPANY)
@@ -43,9 +33,10 @@ export class FolderController {
     @ResponseSchema(FolderModel, {
         description: 'add folder by user'
     })
-    public async addFolder(@Body() body: any, @Req() req: Request): Promise<FolderModel> {
+    public async addFolder(@Body() body: folderReq, @Req() req: Request): Promise<FolderModel> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         body.userId = decodedToken?.id;
+        await validateOrReject(body)
         return await this.folderService.addFolder(body)
     }
 

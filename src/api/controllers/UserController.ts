@@ -6,6 +6,8 @@ import { UserRoles } from "../enums/Users";
 import { UserModel } from "../models/UserModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
 import { Request } from "express";
+import { companyReq } from "./requests/Company";
+import { validateOrReject } from "class-validator";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/users')
@@ -31,14 +33,15 @@ export class UserController {
     @ResponseSchema(UserModel, {
         description: 'add company'
     })
-    public async addCompany(@Body() body: any): Promise<UserModel> {
+    public async addCompany(@Body() body: companyReq): Promise<UserModel> {
+        await validateOrReject(body);
         return await this.userService.addCompany(body);
     }
 
     @Authorized(UserRoles.COMPANY)
     @Post('/')
     @ResponseSchema(UserModel, {
-        description: 'add user of company'
+        description: 'add users of company'
     })
     public async addUser(@Body() body: any, @Req() req: Request): Promise<UserModel> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])

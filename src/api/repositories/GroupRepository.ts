@@ -12,19 +12,15 @@ export class GroupRepository extends Repository<GroupModel> {
                 'process.id', 'process.name', 'process.createdAt',
                 'proces.id', 'proces.name', 'proces.createdAt',
                 'assign.id',
-                'user.id', 'user.email'
+                'user.id', 'user.email',
+                'step.id','step.step','step.stepDescription'
             ])
             .leftJoin('group.folder', 'folder')
             .leftJoin('folder.process', 'process')
             .leftJoin('group.proces', 'proces')
             .leftJoin('group.assign', 'assign')
             .leftJoin('assign.user', 'user')
-            .andWhere('group.user_id =:userId', { userId: userId })
-        return qb.getMany()
-    }
-
-    public async groupList(userId: number): Promise<GroupModel[] | any> {
-        const qb = await this.createQueryBuilder('group')
+            .leftJoin('proces.step','step')
             .andWhere('group.user_id =:userId', { userId: userId })
         return qb.getMany()
     }
