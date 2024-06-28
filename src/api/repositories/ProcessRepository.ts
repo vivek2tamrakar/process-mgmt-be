@@ -7,8 +7,8 @@ export class ProcessRepository extends Repository<ProcessModel> {
     public async getProcessList(userId: number): Promise<ProcessModel[]> {
         const qb = await this.createQueryBuilder('process')
             .select([
-                'process.id', 'process.name', 'process.createdAt',
-                'step.id','step.step','step.stepDescription'
+                'process.id', 'process.name', 'process.createdAt','process.tags','process.description',
+                'step.id','step.stepDescription'
             ])
             .leftJoin('process.step','step')
             .andWhere('process.user_id =:userId', { userId: userId })
@@ -21,8 +21,8 @@ export class ProcessRepository extends Repository<ProcessModel> {
         const qb = await this.createQueryBuilder('process')
             .select([
                 'process.id', 'process.name', 'process.groupId', 'process.folderId', 'process.tags',
-                'process.description', 'process.createdAt', 'process.updatedAt',
-                'step.id', 'step.step', 'step.stepDescription'
+                'process.description', 'process.createdAt', 'process.updatedAt','process.tags','process.description',
+                'step.id', 'step.stepDescription'
             ])
             .leftJoin('process.step', 'step')
             .andWhere('process.id=:processId', { processId: processId })

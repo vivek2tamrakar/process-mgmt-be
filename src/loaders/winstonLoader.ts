@@ -4,6 +4,7 @@ import { configure, format, transports } from 'winston';
 import { env } from '../env';
 
 export const winstonLoader: MicroframeworkLoader = (settings: MicroframeworkSettings | undefined) => {
+    // console.log("----------------------------")
     configure({
         transports: [
             new transports.Console({

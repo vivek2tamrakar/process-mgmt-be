@@ -10,10 +10,10 @@ export class GroupRepository extends Repository<GroupModel> {
                 'group.id', 'group.name', 'group.createdAt',
                 'folder.id', 'folder.name', 'folder.createdAt',
                 'process.id', 'process.name', 'process.createdAt',
-                'proces.id', 'proces.name', 'proces.createdAt',
+                'proces.id', 'proces.name','process.tags','process.description', 'proces.createdAt',
                 'assign.id',
                 'user.id', 'user.email',
-                'step.id','step.step','step.stepDescription'
+                'step.id','step.stepDescription'
             ])
             .leftJoin('group.folder', 'folder')
             .leftJoin('folder.process', 'process')
