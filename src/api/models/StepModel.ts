@@ -14,10 +14,6 @@ export class StepModel extends BaseEntity {
     public processId: number;
 
     @IsNotEmpty()
-    @Column({ name: 'step' })
-    public step: string;
-
-    @IsNotEmpty()
     @Column({ name: 'step_description' })
     public stepDescription: string;
 

@@ -24,7 +24,6 @@ export const expressLoader: MicroframeworkLoader = (settings: MicroframeworkSett
             extended: true,
             parameterLimit: 50000,
         }));
-
         useExpressServer(expressApp, {
             cors: true,
             classTransformer: true,

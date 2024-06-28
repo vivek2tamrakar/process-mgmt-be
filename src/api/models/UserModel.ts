@@ -54,7 +54,7 @@ export class UserModel extends BaseEntity {
     @Column({ name: 'fcm_token' })
     public fcmToken: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     @Column({ name: 'mobile_number' })
     public mobileNumber: string;
 

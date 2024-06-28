@@ -8,8 +8,8 @@ export class FolderRepository extends Repository<FolderModel> {
         const qb = await this.createQueryBuilder('folder')
             .select([
                 'folder.id', 'folder.name', 'folder.createdAt',
-                'process.id', 'process.name', 'process.createdAt',
-                'step.id','step.step','step.stepDescription'
+                'process.id', 'process.name', 'process.createdAt','process.tags','process.description',
+                'step.id','step.stepDescription'
             ])
             .leftJoin('folder.process', 'process')
             .leftJoin('process.step','step')
@@ -22,8 +22,8 @@ export class FolderRepository extends Repository<FolderModel> {
         const qb = await this.createQueryBuilder('folder')
             .select([
                 'folder.id', 'folder.name',
-                'process.id', 'process.name',
-                'step.id','step.step','step.stepDescription'
+                'process.id', 'process.name','process.tags','process.description',
+                'step.id','step.stepDescription'
             ])
             .leftJoin('folder.process', 'process')
             .leftJoin('process.step','step')

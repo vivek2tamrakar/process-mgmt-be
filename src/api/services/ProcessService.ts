@@ -5,7 +5,7 @@ import { OrmRepository } from "typeorm-typedi-extensions";
 import { ProcessModel } from "../models/ProcessModel";
 import { ProcessRepository } from "../repositories/ProcessRepository";
 import { StepRepository } from "../repositories/StepRepository";
-import { NotFound } from "../errors/Group";
+// import { NotFound } from "../errors/Group";
 
 
 @Service()
@@ -20,12 +20,7 @@ export class ProcessService {
     /* ------------------ add process------------------ */
     public async addProcess(body: any): Promise<ProcessModel | any> {
         this.log.info(`add process ${body}`)
-        body.tags = JSON.stringify(body?.tags);
-        let processData = await this.processRepository.save(body);
-        let modifyData = body?.step?.map((ele, index) => {
-            return { processId: processData?.id, step: ele, stepDescription: body?.stepDescription[index] }
-        })
-        return await this.stepRepository.save(modifyData);
+        return await this.processRepository.save(body);
     }
 
     /* ---------------------- delete process ------------ */
@@ -43,15 +38,9 @@ export class ProcessService {
     }
 
     /* ---------------- update process --------------- */
-    public async updateProcess(body): Promise<ProcessModel> {
+    public async updateProcess(body): Promise<ProcessModel | any> {
         this.log.info(`update process data by id ${body}`)
-        const isProcessExist = await this.processRepository.findOne({ id: body?.id });
-        if (!isProcessExist) throw new NotFound();
-        await this.stepRepository.delete({ processId: body?.id })
-        let modifyData = body?.step?.map((ele, index) => {
-            return { processId: body?.id, step: ele, stepDescription: body?.stepDescription[index] }
-        })
-        return await this.stepRepository.save(modifyData);
+        return await this.stepRepository.save({processId : body?.id,stepDescription:body?.stepDescription});
     }
 
 
