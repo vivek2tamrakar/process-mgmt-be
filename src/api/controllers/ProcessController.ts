@@ -35,10 +35,10 @@ export class ProcessController {
     @UseBefore(multer(fileUploadOptions).fields([
         { maxCount: 1, name: 'image' },
     ]))
-    public async addImage(@Body() body: any, @Req() req: Request): Promise<ProcessModel | any> {
+    public async addImage(@Body() body: any, @Req() req: Request, @Res() res: any): Promise<ProcessModel | any> {
         body.image = env.app.schema + '://' + req.headers['host'] + '/uploads/' + req['files']?.image[0].filename;
-        let res = { url: body.image }
-        return res;
+        let result = { url: body.image }
+        return res.status(200).send({success:true,result});
     }
 
     @Authorized(UserRoles.COMPANY)

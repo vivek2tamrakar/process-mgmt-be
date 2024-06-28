@@ -21,4 +21,24 @@ export const winstonLoader: MicroframeworkLoader = (settings: MicroframeworkSett
             }),
         ],
     });
+ 
 };
+
+// import winston from 'winston';
+
+// export const winstonLoader: MicroframeworkLoader = (settings: MicroframeworkSettings | undefined) => winston.createLogger({
+//         level: env.log.level,
+//         format: env.node !== 'development'
+//             ? winston.format.combine(
+//                 winston.format.json()
+//             )
+//             : winston.format.combine(
+//                 winston.format.colorize(),
+//                 winston.format.simple()
+//             ),
+//         transports: [
+//             new winston.transports.Console({
+//                 handleExceptions: true,
+//             })
+//         ],
+//     });
