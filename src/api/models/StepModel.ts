@@ -1,5 +1,5 @@
 import { Exclude, Type } from "class-transformer";
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsOptional } from "class-validator";
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ProcessModel } from "./ProcessModel";
 
@@ -16,6 +16,10 @@ export class StepModel extends BaseEntity {
     @IsNotEmpty()
     @Column({ name: 'step_description' })
     public stepDescription: string;
+
+    @IsOptional()
+    @Column({ name: 'is_completed' })
+    public isCompleted: boolean;
 
     @Exclude({ toClassOnly: true })
     @CreateDateColumn({ name: 'created_at' })
@@ -34,5 +38,5 @@ export class StepModel extends BaseEntity {
     @JoinColumn({ name: 'process_id' })
     public process: ProcessModel;
 
-    
+
 }
