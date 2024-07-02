@@ -4,6 +4,7 @@ import { FolderRepository } from "../repositories/FolderRepository";
 import { FolderModel } from "../models/FolderModel";
 import { LoggerInterface } from "../../lib/logger";
 import { Logger } from "../../decorators/Logger";
+import { FolderAlreadyError } from "../errors/Folder";
 
 
 @Service()
@@ -18,7 +19,16 @@ export class FolderService {
     /* ------------------ add folder ------------------ */
     public async addFolder(body: any): Promise<FolderModel> {
         this.log.info(`add folder ${body}`)
-        return await this.folderRepository.save(body)
+        if (body?.groupId)
+            return await this.isFolderExist({ name: body?.name, userId: body?.userId, groupId: body.groupId });
+        return await this.isFolderExist({ name: body?.name, userId: body?.userId });
+    }
+
+    /* -------- to check folder is exist or not -------------*/
+    public async isFolderExist(body): Promise<FolderModel> {
+        const isFolderExist = await this.folderRepository.findOne(body);
+        if (isFolderExist) throw new FolderAlreadyError()
+        return await this.folderRepository.save(body);
     }
 
     /* ------------------ folder data by id ------------------ */
@@ -34,7 +44,7 @@ export class FolderService {
         return res.status(200).send({ sucess: true, MESSAGE: 'SUCCESSFULLY_DELETE' })
     }
 
-   
+
 
 
 }

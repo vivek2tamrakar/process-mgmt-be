@@ -5,6 +5,8 @@ import { UserModel } from "../models/UserModel";
 import { LoggerInterface } from "../../lib/logger";
 import { Logger } from "../../decorators/Logger";
 import { CompanyError, EmailError } from "../errors/User";
+import { NotFoundError } from "routing-controllers";
+// import { AdminMail } from "../../mailers/userMailer";
 import { AdminMail } from "../../mailers/userMailer";
 
 @Service()
@@ -59,6 +61,29 @@ export class UserService {
     public async companyUserList(companyId: number): Promise<UserModel[]> {
         this.log.info(`get company user's list ${companyId}`)
         return await this.userRepository.companyUserList(companyId);
+    }
+
+    /* --------------------- update user -----------------*/
+    public async updateUser(body: any): Promise<UserModel> {
+        this.log.info(`update user ${body}`)
+        const userData = await this.userRepository.findOne({ id: body?.id });
+        if (userData) {
+            userData.isActive = body?.isActive;
+            userData.name = body?.name;
+            userData.mobileNumber = body?.mobileNumber;
+            return await this.userRepository.save(userData);
+        }
+        throw new NotFoundError()
+    }
+
+    public async deleteUser(id: number, res: any): Promise<UserModel> {
+        this.log.info(`delete user ${id}`)
+        const userData = await this.userRepository.findOne({ id: id });
+        if (userData) {
+            await this.userRepository.softDelete({ id: id });
+            return res.status(200).send({ success: true, MESSAGE: 'SUCCESSFULLY_DELETE' })
+        }
+        throw new NotFoundError()
     }
 
 

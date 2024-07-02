@@ -31,7 +31,7 @@ export class GroupController {
         return await this.groupService.getGroup(userId);
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY, UserRoles.MANAGER])
     @Get('/id/:id')
     @ResponseSchema(GroupModel, {
         description: 'get Group List',

@@ -1,4 +1,4 @@
-import { Authorized, Body, Get, JsonController, Param, Post, Req } from "routing-controllers";
+import { Authorized, Body, Delete, Get, JsonController, Param, Patch, Post, Req, Res } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { UserService } from "../services/UserService";
@@ -47,6 +47,24 @@ export class UserController {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         body.createdById = decodedToken?.id;
         return await this.userService.addUser(body, req.headers['authorization']);
+    }
+
+    @Authorized(UserRoles.COMPANY)
+    @Patch('/')
+    @ResponseSchema(UserModel, {
+        description: 'update user of company'
+    })
+    public async updateUser(@Body() body: any, @Req() req: Request): Promise<UserModel> {
+        return await this.userService.updateUser(body);
+    }
+
+    @Authorized(UserRoles.COMPANY)
+    @Delete('/:id')
+    @ResponseSchema(UserModel, {
+        description: 'update user of company'
+    })
+    public async deleteUser(@Param('id') id: number, @Res() res: any): Promise<UserModel> {
+        return await this.userService.deleteUser(id, res);
     }
 
 }

@@ -27,3 +27,10 @@ export class LoginError extends HttpError {
     }
 
 }
+
+export class NotFoundError extends HttpError {
+    constructor() {
+        super(404, 'USER_NOT_FOUND')
+    }
+
+}

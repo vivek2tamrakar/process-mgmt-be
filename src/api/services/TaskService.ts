@@ -3,6 +3,7 @@ import { OrmRepository } from "typeorm-typedi-extensions";
 import { Logger, LoggerInterface } from "../../decorators/Logger";
 import { TaskRepository } from "../repositories/TaskRepository";
 import { TaskModel } from "../models/TaskModel";
+import { TaskNotFound } from "../errors/Task";
 
 @Service()
 export class TaskService {
@@ -18,17 +19,29 @@ export class TaskService {
         this.log.info(`add task`)
         let modifyData = body?.userId?.map((ele) => {
             return {
-                "groupId": body?.groupId,
-                "name": body?.name,
-                "description": body?.description,
-                "userId": ele,
-                "processId": body?.processId,
-                "startDate": body?.startDate,
-                "endDate": body?.endDate,
-                "duration": body?.duration
+                groupId: body?.groupId,
+                name: body?.name,
+                description: body?.description,
+                userId: ele,
+                processId: body?.processId,
+                startDate: body?.startDate,
+                endDate: body?.endDate,
+                duration: body?.duration
             }
         })
         return await this.taskRepository.save(modifyData);
     }
+
+    /* ----------------------update task  ------------ */
+    public async updateTask(body): Promise<TaskModel> {
+        this.log.info(`update task`)
+        let isTaskExist = await this.taskRepository.findOne({ id: body?.id });
+        if (isTaskExist) {
+            isTaskExist.status = body?.status;
+            return await this.taskRepository.save(isTaskExist);
+        }
+        throw new TaskNotFound();
+    }
+
 
 }
