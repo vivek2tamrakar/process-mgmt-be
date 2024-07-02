@@ -45,27 +45,6 @@ export class GroupService {
     /* ---------------------- edit group -------------------- */
     public async editGroupFolderProcess(body: any): Promise<GroupModel | any> {
         this.log.info(`edit group ,folder,process`)
-        // if (body?.groupId) {
-        //     const isGroupExist = await this.groupRepository.findOne({ id: body?.groupId });
-        //     if (isGroupExist) {
-        //         isGroupExist.name = body?.name;
-        //         return await this.groupRepository.save(isGroupExist);
-        //     }
-        // } else if (body?.folderId) {
-        //     const isFolderExist = await this.folderRepository.findOne({ id: body?.folderId });
-        //     if (isFolderExist) {
-        //         isFolderExist.name = body?.name;
-        //         return await this.folderRepository.save(isFolderExist);
-        //     }
-        // } else if (body?.processId) {
-        //     const isProcessExist = await this.processRepository.findOne({ id: body?.processId });
-        //     if (isProcessExist) {
-        //         isProcessExist.name = body?.name;
-        //         return await this.processRepository.save(isProcessExist);
-        //     }
-        // }
-        // throw new NotFound()
-
         if (body?.groupId) {
             const updatedGroup = await this.updateEntity(this.groupRepository, body?.groupId, body?.name);
             if (updatedGroup) return updatedGroup;

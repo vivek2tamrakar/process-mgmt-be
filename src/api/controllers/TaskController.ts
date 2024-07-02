@@ -1,4 +1,4 @@
-import {  Body, JsonController, Post } from "routing-controllers";
+import { Body, JsonController, Patch, Post } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 // import { UserRoles } from "../enums/Users";
@@ -21,6 +21,14 @@ export class TaskController {
     })
     public async addTask(@Body() body: any): Promise<TaskModel> {
         return await this.taskService.addTask(body)
+    }
+
+    @Patch('/')
+    @ResponseSchema(TaskModel, {
+        description: 'update task',
+    })
+    public async updateTask(@Body() body: any): Promise<TaskModel> {
+        return await this.taskService.updateTask(body)
     }
 
 }

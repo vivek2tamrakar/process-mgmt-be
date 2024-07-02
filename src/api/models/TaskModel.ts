@@ -2,6 +2,7 @@ import { Exclude, Type } from "class-transformer";
 import { IsNotEmpty, IsOptional } from "class-validator";
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { GroupModel } from "./GroupModel";
+import { UserModel } from "./UserModel";
 
 @Entity({ name: 'task' })
 export class TaskModel extends BaseEntity {
@@ -61,5 +62,9 @@ export class TaskModel extends BaseEntity {
     @OneToOne(type => GroupModel, groupModel => groupModel.task, { cascade: true })
     @JoinColumn({ name: 'group_id' })
     public groupModel: GroupModel;
+
+    @JoinColumn({ name: 'user_id' })
+    @OneToOne(type =>UserModel , userModel => userModel.id)
+    public user: UserModel
 
 }

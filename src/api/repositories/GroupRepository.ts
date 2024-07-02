@@ -9,8 +9,8 @@ export class GroupRepository extends Repository<GroupModel> {
             .select([
                 'group.id', 'group.name', 'group.createdAt',
                 'folder.id', 'folder.name', 'folder.createdAt',
-                'process.id', 'process.name', 'process.createdAt',
-                'proces.id', 'proces.name', 'process.tags', 'process.description', 'proces.createdAt',
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description',
+                'proces.id', 'proces.name', 'proces.tags', 'proces.description', 'proces.createdAt',
                 'assign.id',
                 'user.id', 'user.email',
                 'step.id', 'step.stepDescription'
@@ -30,11 +30,13 @@ export class GroupRepository extends Repository<GroupModel> {
             .select([
                 'group', 'assign.id',
                 'user.id', 'user.email',
-                'task.id', 'task.name', 'task.description', 'task.startDate', 'task.endDate', 'task.duration'
+                'task.id', 'task.name', 'task.status', 'task.description', 'task.startDate', 'task.endDate', 'task.duration', 'task.createdAt',
+                'taskUser.id', 'taskUser.name'
             ])
             .leftJoin('group.assign', 'assign')
             .leftJoin('assign.user', 'user')
             .leftJoin('group.task', 'task')
+            .leftJoin('task.user', 'taskUser')
             .andWhere('group.id =:groupId', { groupId: groupId })
         return qb.getOne()
     }

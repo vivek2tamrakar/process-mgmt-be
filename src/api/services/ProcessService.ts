@@ -5,6 +5,7 @@ import { OrmRepository } from "typeorm-typedi-extensions";
 import { ProcessModel } from "../models/ProcessModel";
 import { ProcessRepository } from "../repositories/ProcessRepository";
 import { StepRepository } from "../repositories/StepRepository";
+import { ProcessAlreadyError } from "../errors/Process";
 // import { NotFound } from "../errors/Group";
 
 
@@ -20,6 +21,17 @@ export class ProcessService {
     /* ------------------ add process------------------ */
     public async addProcess(body: any): Promise<ProcessModel | any> {
         this.log.info(`add process ${body}`)
+        if (body?.groupId)
+            return await this.isProcessExist({ name: body?.name, userId: body?.userId, groupId: body.groupId }, body);
+        else if (body?.folderId)
+            return await this.isProcessExist({ name: body?.name, userId: body?.userId, folderId: body.folderId }, body);
+        return await this.isProcessExist({ name: body?.name, userId: body?.userId }, body);
+    }
+
+    /* -------- to check process is exist or not -------------*/
+    public async isProcessExist(processData, body): Promise<ProcessModel> {
+        const isProcessExist = await this.processRepository.findOne(processData);
+        if (isProcessExist) throw new ProcessAlreadyError()
         return await this.processRepository.save(body);
     }
 
