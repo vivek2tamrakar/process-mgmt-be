@@ -4,20 +4,21 @@ import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMa
 import { FolderModel } from "./FolderModel";
 import { AssignModel } from "./AssignModel";
 import { ProcessModel } from "./ProcessModel";
+import { TaskModel } from "./TaskModel";
 
-@Entity({name:'group'})
+@Entity({ name: 'group' })
 export class GroupModel extends BaseEntity {
 
     @PrimaryGeneratedColumn()
-    public id:number;
+    public id: number;
 
     @IsNotEmpty()
-    @Column({name:'name'})
-    public name:string;
+    @Column({ name: 'name' })
+    public name: string;
 
     @IsNotEmpty()
-    @Column({name:'user_id'})
-    public userId:number;
+    @Column({ name: 'user_id' })
+    public userId: number;
 
     @Exclude()
     @Exclude({ toClassOnly: true })
@@ -46,4 +47,9 @@ export class GroupModel extends BaseEntity {
     @Expose()
     @OneToMany(type => ProcessModel, processModel => processModel.processModel)
     public proces: ProcessModel;
+
+    @Type(() => TaskModel)
+    @Expose()
+    @OneToMany(type => TaskModel, taskModel => taskModel.groupModel)
+    public task: TaskModel;
 } 
