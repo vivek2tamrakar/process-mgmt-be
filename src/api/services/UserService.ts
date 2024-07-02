@@ -7,6 +7,7 @@ import { Logger } from "../../decorators/Logger";
 import { CompanyError, EmailError } from "../errors/User";
 import { NotFoundError } from "routing-controllers";
 // import { AdminMail } from "../../mailers/userMailer";
+import { AdminMail } from "../../mailers/userMailer";
 
 @Service()
 export class UserService {
@@ -21,15 +22,28 @@ export class UserService {
         this.log.info(`userIngo by id ${userId}`)
         return await this.userRepository.findOne({ id: userId })
     }
+      
+    public async generateRandomPassword(length = 12) {
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+        let password = "";
+      
+        for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * charset.length);
+          password += charset[randomIndex];
+        }
+        return password;
+    }
 
     /* ------------------ add user of the company------------------ */
-    public async addUser(body: any, token: string): Promise<UserModel> {
+    public async addUser(body: any, token: string): Promise<any> {
         // token = token.split(' ')[1];
         this.log.info(`add user of the company ${body}`)
         const isExistEmail = await this.userRepository.findOne({ email: body?.email });
         if (isExistEmail) throw new EmailError()
-        // await AdminMail(body?.email, token)
-        // body.isActive = false;
+        const password = await this.generateRandomPassword(12)
+        body.password =  await UserModel.hashPassword(password);
+        await AdminMail(body?.email, password)
+        body.isActive = false;
         return await this.userRepository.save(body);
     }
 

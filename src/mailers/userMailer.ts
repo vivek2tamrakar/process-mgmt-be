@@ -1,7 +1,8 @@
 import { env } from '../env';
 import { Transport } from './index';
 
-export const AdminMail = (dbUser: any, data?: any) => {
+export const AdminMail = async (dbUser: any, data?: any) => {
+    console.log('data',data);
     let template;
     template = 'userMail';
     const helperOptions = {
@@ -10,7 +11,8 @@ export const AdminMail = (dbUser: any, data?: any) => {
         subject: 'INVITATION',
         template,
         context: {
-            token: `http://${env.app.host}:${env.app.port}/api/users/verify/${data}`,
+            // token: `http://${env.app.host}:${env.app.port}/api/users/verify/${data}`,
+            token:data
         }
     };
     Transport().sendMail(helperOptions, (error, info) => {
