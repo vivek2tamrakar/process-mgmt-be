@@ -8,9 +8,13 @@ export class ProcessRepository extends Repository<ProcessModel> {
         const qb = await this.createQueryBuilder('process')
             .select([
                 'process.id', 'process.name', 'process.createdAt','process.tags','process.description',
-                'step.id','step.stepDescription'
+                'step.id','step.stepDescription',
+                'assign.id',
+                'user.id', 'user.email',
             ])
             .leftJoin('process.step','step')
+            .leftJoin('process.assign', 'assign')
+            .leftJoin('assign.user', 'user')
             .andWhere('process.user_id =:userId', { userId: userId })
             .andWhere('process.group_id IS NULL')
             .andWhere('process.folder_id IS NULL')

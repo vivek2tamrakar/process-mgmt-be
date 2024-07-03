@@ -4,6 +4,7 @@ import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinCol
 import { FolderModel } from "./FolderModel";
 import { GroupModel } from "./GroupModel";
 import { StepModel } from "./StepModel";
+import { AssignModel } from "./AssignModel";
 
 
 @Entity({ name: 'process' })
@@ -64,6 +65,11 @@ export class ProcessModel extends BaseEntity {
     @Expose()
     @OneToMany(type => StepModel, stepModel => stepModel.process)
     public step: StepModel;
+
+    @Type(() => AssignModel)
+    @Expose()
+    @OneToMany(type => AssignModel, assignModel => assignModel.processModel)
+    public assign: AssignModel;
 
     
 }

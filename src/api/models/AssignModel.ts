@@ -3,6 +3,8 @@ import { IsNotEmpty, IsOptional } from "class-validator";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { GroupModel } from "./GroupModel";
 import { UserModel } from "./UserModel";
+import { FolderModel } from "./FolderModel";
+import { ProcessModel } from "./ProcessModel";
 
 @Entity({ name: 'assign' })
 export class AssignModel extends BaseEntity {
@@ -49,6 +51,16 @@ export class AssignModel extends BaseEntity {
     public groupmodel: GroupModel;
 
     @JoinColumn({ name: 'assign_user_id' })
-    @OneToOne(type =>UserModel , userModel => userModel.id)
+    @OneToOne(type => UserModel, userModel => userModel.id)
     public user: UserModel
+
+    @Type(() => FolderModel)
+    @OneToOne(type => FolderModel, folderModel => folderModel.assign, { cascade: true })
+    @JoinColumn({ name: 'folder_id' })
+    public folderModel: FolderModel;
+
+    @Type(() => ProcessModel)
+    @OneToOne(type => ProcessModel, processModel => processModel.assign, { cascade: true })
+    @JoinColumn({ name: 'process_id' })
+    public processModel: ProcessModel;
 } 
