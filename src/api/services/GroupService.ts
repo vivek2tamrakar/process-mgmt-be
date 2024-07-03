@@ -21,12 +21,12 @@ export class GroupService {
     /* ------------------ add group by company------------------ */
     public async addGroup(body: any, id: number): Promise<GroupModel> {
         this.log.info(`add water tracker by user ${body}`)
-        let isGroupNameAlreadyExist = await this.groupRepository.findOne({ name: body?.name })
+        let isGroupNameAlreadyExist = await this.groupRepository.findOne({ userId: id, name: body?.name })
         if (isGroupNameAlreadyExist) throw new GroupError;
         body.userId = id;
         return await this.groupRepository.save(body);
     }
-
+   
     /* ---------------------- group list ------------------ */
     public async getGroup(userId: number): Promise<GroupModel[] | any> {
         this.log.info(`get group list`)

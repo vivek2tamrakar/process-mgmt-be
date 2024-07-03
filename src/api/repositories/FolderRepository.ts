@@ -9,10 +9,14 @@ export class FolderRepository extends Repository<FolderModel> {
             .select([
                 'folder.id', 'folder.name', 'folder.createdAt',
                 'process.id', 'process.name', 'process.createdAt','process.tags','process.description',
-                'step.id','step.stepDescription'
+                'step.id','step.stepDescription',
+                'assign.id',
+                'user.id', 'user.email',
             ])
             .leftJoin('folder.process', 'process')
             .leftJoin('process.step','step')
+            .leftJoin('folder.assign', 'assign')
+            .leftJoin('assign.user', 'user')
             .andWhere('folder.user_id =:userId', { userId: userId })
             .andWhere('folder.group_id IS NULL')
         return qb.getMany()
