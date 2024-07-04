@@ -31,6 +31,10 @@ export class TaskModel extends BaseEntity {
     public processId: number;
 
     @IsOptional()
+    @Column({ name: 'is_active' })
+    public isActive: boolean;
+
+    @IsOptional()
     @Column({ name: 'status' })
     public status: number;
 
@@ -64,7 +68,7 @@ export class TaskModel extends BaseEntity {
     public groupModel: GroupModel;
 
     @JoinColumn({ name: 'user_id' })
-    @OneToOne(type =>UserModel , userModel => userModel.id)
+    @OneToOne(type => UserModel, userModel => userModel.id)
     public user: UserModel
 
 }

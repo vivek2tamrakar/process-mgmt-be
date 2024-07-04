@@ -13,8 +13,8 @@ export class GroupRepository extends Repository<GroupModel> {
                 'proces.id', 'proces.name', 'proces.tags', 'proces.description', 'proces.createdAt', 'proces.updatedAt',
                 'assign.id',
                 'user.id', 'user.email',
-                'step.id', 'step.stepDescription', 'step.isCompleted', 'step.lastReview', 'step.updatedAt',
-                'folderStep.id', 'folderStep.stepDescription'
+                'step.id', 'step.stepDescription', 'step.isCompleted','step.createdAt', 'step.lastReview', 'step.updatedAt',
+                'folderStep.id', 'folderStep.stepDescription','folderStep.isCompleted', 'folderStep.lastReview', 'folderStep.updatedAt','folderStep.createdAt'
             ])
             .leftJoin('group.folder', 'folder')
             .leftJoin('folder.process', 'process')

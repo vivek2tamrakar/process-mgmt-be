@@ -17,18 +17,6 @@ export class AssignController {
     ) {
     }
 
-    @Authorized([UserRoles.TASKMANAGER,UserRoles.EMPLOYEE])
-    @Get('/group-list')
-    @ResponseSchema(AssignModel, {
-        description: 'get Group List whose assign to this user',
-        isArray: true
-    })
-    public async getGroupList(@Req() req: Request): Promise<AssignModel[]> {
-        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
-        let userId = decodedToken?.id;
-        return await this.assignService.getGroupList(userId);
-    }
-
     @Authorized([UserRoles.TASKMANAGER, UserRoles.EMPLOYEE])
     @Get('/group-id/:id')
     @ResponseSchema(AssignModel, {

@@ -38,6 +38,7 @@ export class TaskService {
         let isTaskExist = await this.taskRepository.findOne({ id: body?.id });
         if (isTaskExist) {
             isTaskExist.status = body?.status;
+            isTaskExist.isActive=body?.isActive;
             return await this.taskRepository.save(isTaskExist);
         }
         throw new TaskNotFound();
