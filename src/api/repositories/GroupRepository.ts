@@ -9,11 +9,11 @@ export class GroupRepository extends Repository<GroupModel> {
             .select([
                 'group.id', 'group.name', 'group.createdAt',
                 'folder.id', 'folder.name', 'folder.createdAt',
-                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description',
-                'proces.id', 'proces.name', 'proces.tags', 'proces.description', 'proces.createdAt',
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt',
+                'proces.id', 'proces.name', 'proces.tags', 'proces.description', 'proces.createdAt', 'proces.updatedAt',
                 'assign.id',
                 'user.id', 'user.email',
-                'step.id', 'step.stepDescription',
+                'step.id', 'step.stepDescription', 'step.isCompleted', 'step.lastReview', 'step.updatedAt',
                 'folderStep.id', 'folderStep.stepDescription'
             ])
             .leftJoin('group.folder', 'folder')

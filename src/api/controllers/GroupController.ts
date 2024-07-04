@@ -41,6 +41,7 @@ export class GroupController {
         return await this.groupService.assignGroupsUser(id);
     }
 
+
     @Authorized(UserRoles.COMPANY)
     @Post('/')
     @ResponseSchema(GroupModel, {

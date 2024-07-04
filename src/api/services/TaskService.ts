@@ -43,5 +43,11 @@ export class TaskService {
         throw new TaskNotFound();
     }
 
+    /* ---------------------- delete task ------------ */
+    public async deleteTask(taskId: number, res: any): Promise<TaskModel> {
+        this.log.info(`delete task by ${taskId}`)
+        await this.taskRepository.softDelete({ id: taskId })
+        return res.status(200).send({ sucess: true, MESSAGE: 'SUCCESSFULLY_DELETE' })
+    }
 
 }

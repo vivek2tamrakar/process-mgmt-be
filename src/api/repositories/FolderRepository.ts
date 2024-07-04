@@ -8,13 +8,13 @@ export class FolderRepository extends Repository<FolderModel> {
         const qb = await this.createQueryBuilder('folder')
             .select([
                 'folder.id', 'folder.name', 'folder.createdAt',
-                'process.id', 'process.name', 'process.createdAt','process.tags','process.description',
-                'step.id','step.stepDescription',
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description','process.updatedAt',
+                'step.id', 'step.stepDescription', 'step.isCompleted', 'step.lastReview', 'step.updatedAt',
                 'assign.id',
                 'user.id', 'user.email',
             ])
             .leftJoin('folder.process', 'process')
-            .leftJoin('process.step','step')
+            .leftJoin('process.step', 'step')
             .leftJoin('folder.assign', 'assign')
             .leftJoin('assign.user', 'user')
             .andWhere('folder.user_id =:userId', { userId: userId })
@@ -26,11 +26,11 @@ export class FolderRepository extends Repository<FolderModel> {
         const qb = await this.createQueryBuilder('folder')
             .select([
                 'folder.id', 'folder.name',
-                'process.id', 'process.name','process.tags','process.description',
-                'step.id','step.stepDescription'
+                'process.id', 'process.name', 'process.tags', 'process.description', 'process.createdAt', 'process.updatedAt',
+                'step.id', 'step.stepDescription', 'step.isCompleted', 'step.lastReview', 'step.updatedAt'
             ])
             .leftJoin('folder.process', 'process')
-            .leftJoin('process.step','step')
+            .leftJoin('process.step', 'step')
             .andWhere('folder.id=:id', { id: id })
         return qb.getOne()
     }
