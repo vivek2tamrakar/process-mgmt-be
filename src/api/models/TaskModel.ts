@@ -38,7 +38,7 @@ export class TaskModel extends BaseEntity {
     @Column({ name: 'status' })
     public status: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @Column({ name: 'start_date' })
     public startDate: Date;
 
@@ -46,9 +46,25 @@ export class TaskModel extends BaseEntity {
     @Column({ name: 'end_date' })
     public endDate: Date;
 
-    @IsNotEmpty()
+    @IsOptional()
     @Column({ name: 'duration' })
     public duration: string;
+
+    @IsOptional()
+    @Column({ name: 'is_process' })
+    public isProcess: boolean;
+
+    @IsOptional()
+    @Column({ name: 'is_day_task' })
+    public isDayTask: boolean;
+
+    @IsNotEmpty()
+    @Column({ name: 'created_id' })
+    public createdId: number;
+
+    @IsNotEmpty()
+    @Column({ name: 'remainder' })
+    public remainder: string;
 
     @Exclude({ toClassOnly: true })
     @CreateDateColumn({ name: 'created_at' })
