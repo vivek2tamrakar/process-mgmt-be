@@ -22,14 +22,14 @@ export class UserService {
         this.log.info(`userIngo by id ${userId}`)
         return await this.userRepository.findOne({ id: userId })
     }
-      
+
     public async generateRandomPassword(length = 12) {
         const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
         let password = "";
-      
+
         for (let i = 0; i < length; i++) {
-          const randomIndex = Math.floor(Math.random() * charset.length);
-          password += charset[randomIndex];
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            password += charset[randomIndex];
         }
         return password;
     }
@@ -41,7 +41,7 @@ export class UserService {
         const isExistEmail = await this.userRepository.findOne({ email: body?.email });
         if (isExistEmail) throw new EmailError()
         const password = await this.generateRandomPassword(12)
-        body.password =  await UserModel.hashPassword(password);
+        body.password = await UserModel.hashPassword(password);
         await AdminMail(body?.email, password)
         body.isActive = false;
         return await this.userRepository.save(body);
@@ -68,6 +68,7 @@ export class UserService {
         this.log.info(`update user ${body}`)
         const userData = await this.userRepository.findOne({ id: body?.id });
         if (userData) {
+            userData.role = body?.role;
             userData.isActive = body?.isActive;
             userData.name = body?.name;
             userData.mobileNumber = body?.mobileNumber;
