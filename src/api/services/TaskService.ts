@@ -26,7 +26,11 @@ export class TaskService {
                 processId: body?.processId,
                 startDate: body?.startDate,
                 endDate: body?.endDate,
-                duration: body?.duration
+                duration: body?.duration,
+                isProcess: body?.isProcess,
+                isDayTask: body?.isDayTask,
+                remainder: body?.remainder,
+                createdId:body?.createdId
             }
         })
         return await this.taskRepository.save(modifyData);
@@ -38,7 +42,7 @@ export class TaskService {
         let isTaskExist = await this.taskRepository.findOne({ id: body?.id });
         if (isTaskExist) {
             isTaskExist.status = body?.status;
-            isTaskExist.isActive=body?.isActive;
+            isTaskExist.isActive = body?.isActive;
             return await this.taskRepository.save(isTaskExist);
         }
         throw new TaskNotFound();

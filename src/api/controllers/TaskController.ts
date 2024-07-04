@@ -17,7 +17,7 @@ export class TaskController {
     ) {
     }
 
-    // @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.TASKMANAGER,UserRoles.COMPANY])
     @Post('/')
     @ResponseSchema(TaskModel, {
         description: 'add task',
@@ -26,6 +26,7 @@ export class TaskController {
         return await this.taskService.addTask(body)
     }
 
+    @Authorized(UserRoles.TASKMANAGER)
     @Patch('/')
     @ResponseSchema(TaskModel, {
         description: 'update task',
@@ -34,7 +35,7 @@ export class TaskController {
         return await this.taskService.updateTask(body)
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized(UserRoles.TASKMANAGER)
     @Delete('/:id')
     @ResponseSchema(TaskModel, {
         description: 'delete task'
