@@ -54,6 +54,7 @@ export class ProcessService {
         this.log.info(`update process data by id ${body}`)
         const processData = await this.processRepository.findOne({ id: body?.id });
         if (processData) {
+            processData.name = body?.name;
             processData.tags = body?.tags;
             processData.description = body?.description;
             await this.processRepository.save(processData);

@@ -24,7 +24,7 @@ export class StepController {
         return await this.stepService.updateRunChecklist(body)
     }
 
-        @Authorized(UserRoles.COMPANY)
+    @Authorized(UserRoles.COMPANY)
     @Delete('/:id')
     @ResponseSchema(StepModel, {
         description: 'delete step'

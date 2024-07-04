@@ -35,6 +35,18 @@ export class AssignService {
     }
 
 
+    /* ------------------ get group list------------------ */
+    public async getGroupList(assignUserId: number): Promise<AssignModel[]> {
+        this.log.info(`get group list`)
+        return await this.assignRepository.getGroupList(assignUserId);
+    }
+
+
+    /* ------------------ get user's of particular group------------------ */
+    public async getUserOfParticularGroup(groupId: number): Promise<AssignModel[]> {
+        this.log.info(`get user's of particular group`)
+        return await this.assignRepository.getUserOfParticularGroup(groupId);
+    }
 
 
 }

@@ -63,4 +63,8 @@ export class AssignModel extends BaseEntity {
     @OneToOne(type => ProcessModel, processModel => processModel.assign, { cascade: true })
     @JoinColumn({ name: 'process_id' })
     public processModel: ProcessModel;
+
+    @JoinColumn({ name: 'group_id' })
+    @OneToOne(type => GroupModel, groupModel => groupModel.id)
+    public group: GroupModel
 } 

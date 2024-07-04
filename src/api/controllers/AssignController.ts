@@ -1,4 +1,4 @@
-import { Authorized, Body, JsonController, Patch, Post, Req } from "routing-controllers";
+import { Authorized, Body, Get, JsonController, Param, Patch, Post, Req } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { AssignService } from "../services/AssignService";
@@ -15,6 +15,28 @@ export class AssignController {
         @Service() private assignService: AssignService,
         @Service() private decodeTokenService: DecodeTokenService
     ) {
+    }
+
+    @Authorized([UserRoles.TASKMANAGER,UserRoles.EMPLOYEE])
+    @Get('/group-list')
+    @ResponseSchema(AssignModel, {
+        description: 'get Group List whose assign to this user',
+        isArray: true
+    })
+    public async getGroupList(@Req() req: Request): Promise<AssignModel[]> {
+        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
+        let userId = decodedToken?.id;
+        return await this.assignService.getGroupList(userId);
+    }
+
+    @Authorized([UserRoles.TASKMANAGER, UserRoles.EMPLOYEE])
+    @Get('/group-id/:id')
+    @ResponseSchema(AssignModel, {
+        description: `particular group's users`,
+        isArray: true
+    })
+    public async getUserOfParticularGroup(@Param('id') id: number, @Req() req: Request): Promise<AssignModel[]> {
+        return await this.assignService.getUserOfParticularGroup(id);
     }
 
     @Authorized(UserRoles.COMPANY)
