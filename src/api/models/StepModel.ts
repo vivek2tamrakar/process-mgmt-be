@@ -21,6 +21,10 @@ export class StepModel extends BaseEntity {
     @Column({ name: 'is_completed' })
     public isCompleted: boolean;
 
+    @IsOptional()
+    @Column({ name: 'last_review' })
+    public lastReview: Date;
+
     @Exclude({ toClassOnly: true })
     @CreateDateColumn({ name: 'created_at' })
     public readonly createdAt: Date;
