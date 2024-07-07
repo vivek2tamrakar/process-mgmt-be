@@ -34,14 +34,23 @@ export class AssignService {
         return await this.assignRepository.save(newAssignments);
     }
 
-
-
-
     /* ------------------ get user's of particular group------------------ */
     public async getUserOfParticularGroup(groupId: number): Promise<AssignModel[]> {
         this.log.info(`get user's of particular group`)
         return await this.assignRepository.getUserOfParticularGroup(groupId);
     }
 
+
+    /* ------------------ get group list whose assign to this user------------------ */
+    public async groupList(assignUserId): Promise<AssignModel[]> {
+        this.log.info(`get group list whose assign to this user`)
+        return await this.assignRepository.groupList(assignUserId);
+    }
+    
+      /* ------------------ get process list whose assign to this user------------------ */
+      public async processList(assignUserId): Promise<AssignModel[]> {
+        this.log.info(`get group list whose assign to this user`)
+        return await this.assignRepository.processList(assignUserId);
+    }
 
 }

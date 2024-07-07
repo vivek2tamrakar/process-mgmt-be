@@ -1,13 +1,14 @@
 import { EntityRepository, Repository } from "typeorm";
 import { ProcessModel } from "../models/ProcessModel";
+import { UserRolesId } from "../enums/Users";
 
 @EntityRepository(ProcessModel)
 export class ProcessRepository extends Repository<ProcessModel> {
 
-    public async getProcessList(userId: number): Promise<ProcessModel[]> {
+    public async getProcessList(userId: number, roleId: number): Promise<ProcessModel[]> {
         const qb = await this.createQueryBuilder('process')
             .select([
-                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description',  'process.updatedAt',
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt',
                 'step.id', 'step.stepDescription', 'step.isCompleted', 'step.lastReview', 'step.updatedAt',
                 'assign.id',
                 'user.id', 'user.email',
@@ -15,9 +16,14 @@ export class ProcessRepository extends Repository<ProcessModel> {
             .leftJoin('process.step', 'step')
             .leftJoin('process.assign', 'assign')
             .leftJoin('assign.user', 'user')
-            .andWhere('process.user_id =:userId', { userId: userId })
             .andWhere('process.group_id IS NULL')
             .andWhere('process.folder_id IS NULL')
+        if (roleId == UserRolesId.COMPANYID)
+            qb.andWhere('process.user_id =:userId', { userId: userId })
+        else
+            qb.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId });
+
+        qb.orderBy('process.created_at', 'DESC')
         return qb.getMany()
     }
 

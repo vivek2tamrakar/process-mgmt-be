@@ -6,7 +6,13 @@ export enum UserRoles {
     EMPLOYEE=5
 }
 
-
+export enum UserRolesId {
+    ADMINID=1,
+    COMPANYID=2,
+    MANAGERID=3,
+    TASKMANAGERID=4,
+    EMPLOYEEID=5
+}
 
 
 
