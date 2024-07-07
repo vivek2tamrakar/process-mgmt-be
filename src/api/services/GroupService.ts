@@ -26,13 +26,13 @@ export class GroupService {
         body.userId = id;
         return await this.groupRepository.save(body);
     }
-   
+
     /* ---------------------- group list ------------------ */
-    public async getGroup(userId: number): Promise<GroupModel[] | any> {
+    public async getGroup(userId: number, roleId: number): Promise<GroupModel[] | any> {
         this.log.info(`get group list`)
-        const group = await this.groupRepository.getGroupList(userId)
-        const folder = await this.folderRepository.getFolderList(userId)
-        const process = await this.processRepository.getProcessList(userId);
+        const group = await this.groupRepository.getGroupList(userId,roleId)
+        const folder = await this.folderRepository.getFolderList(userId,roleId)
+        const process = await this.processRepository.getProcessList(userId,roleId);
         return { group, folder, process }
     }
 

@@ -19,7 +19,7 @@ export class GroupController {
     ) {
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY,UserRoles.TASKMANAGER])
     @Get('/list')
     @ResponseSchema(GroupModel, {
         description: 'get Group List',
@@ -28,7 +28,8 @@ export class GroupController {
     public async getGroup(@Req() req: Request): Promise<GroupModel[]> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         let userId = decodedToken?.id;
-        return await this.groupService.getGroup(userId);
+        let roleId = decodedToken?.id;
+        return await this.groupService.getGroup(userId, roleId);
     }
 
     @Authorized([UserRoles.COMPANY, UserRoles.MANAGER, UserRoles.TASKMANAGER, UserRoles.EMPLOYEE])

@@ -15,7 +15,7 @@ export class StepController {
     ) {
     }
 
-    // @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY,UserRoles.TASKMANAGER])
     @Patch('/')
     @ResponseSchema(StepModel, {
         description: 'update run checklist'

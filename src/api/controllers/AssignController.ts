@@ -17,7 +17,29 @@ export class AssignController {
     ) {
     }
 
-    @Authorized([UserRoles.TASKMANAGER, UserRoles.EMPLOYEE])
+    @Authorized([UserRoles.TASKMANAGER])
+    @Get('/group-list')
+    @ResponseSchema(AssignModel, {
+        description: `get group list whose assign to this user`,
+        isArray: true
+    })
+    public async groupList(@Req() req: Request): Promise<AssignModel[]> {
+        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
+        return await this.assignService.groupList(decodedToken?.id);
+    }
+
+    @Authorized([UserRoles.TASKMANAGER])
+    @Get('/process-list')
+    @ResponseSchema(AssignModel, {
+        description: `get process list whose assign to this user`,
+        isArray: true
+    })
+    public async processList(@Req() req: Request): Promise<AssignModel[]> {
+        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
+        return await this.assignService.processList(decodedToken?.id);
+    }
+
+    // @Authorized([UserRoles.TASKMANAGER, UserRoles.EMPLOYEE])
     @Get('/group-id/:id')
     @ResponseSchema(AssignModel, {
         description: `particular group's users`,

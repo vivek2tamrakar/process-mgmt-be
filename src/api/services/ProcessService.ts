@@ -52,19 +52,24 @@ export class ProcessService {
     /* ---------------- update process --------------- */
     public async updateProcess(body): Promise<ProcessModel | any> {
         this.log.info(`update process data by id ${body}`)
+        let saveProcessData;
         const processData = await this.processRepository.findOne({ id: body?.id });
         if (processData) {
             processData.name = body?.name;
             processData.tags = body?.tags;
+            processData.folderId = body?.folderId;
+            processData.groupId = body?.groupId;
             processData.description = body?.description;
-            await this.processRepository.save(processData);
+            saveProcessData = await this.processRepository.save(processData);
         }
         if (body?.stepId) {
             const stepData = await this.stepRepository.findOne({ id: body?.stepId });
             stepData.stepDescription = body?.stepDescription;
             return await this.stepRepository.save(stepData);
+        } else if (body?.stepDescription) {
+            return await this.stepRepository.save({ processId: body?.id, stepDescription: body?.stepDescription });
         }
-        return await this.stepRepository.save({ processId: body?.id, stepDescription: body?.stepDescription });
+        return saveProcessData;
     }
 
 

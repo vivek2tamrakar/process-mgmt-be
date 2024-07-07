@@ -66,6 +66,18 @@ export class TaskModel extends BaseEntity {
     @Column({ name: 'remainder' })
     public remainder: string;
 
+    @IsNotEmpty()
+    @Column({ name: 'recurren_type' })
+    public recurrenType: string;
+
+    @IsNotEmpty()
+    @Column({ name: 'recurren_start_date' })
+    public recurrenStartDate: Date;
+
+    @IsNotEmpty()
+    @Column({ name: 'recurren_end_date' })
+    public recurrenEndDate: Date;
+
     @Exclude({ toClassOnly: true })
     @CreateDateColumn({ name: 'created_at' })
     public readonly createdAt: Date;

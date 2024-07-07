@@ -30,7 +30,10 @@ export class TaskService {
                 isProcess: body?.isProcess,
                 isDayTask: body?.isDayTask,
                 remainder: body?.remainder,
-                createdId:body?.createdId
+                createdId: body?.createdId,
+                recurrenType: body?.recurrenType,
+                recurrenStartDate: body?.recurrenStartDate,
+                recurrenEndDate: body?.recurrenEndDate
             }
         })
         return await this.taskRepository.save(modifyData);
