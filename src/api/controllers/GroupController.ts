@@ -40,7 +40,7 @@ export class GroupController {
     public async getGroup(@Req() req: Request): Promise<GroupModel[]> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         let userId = decodedToken?.id;
-        let roleId = decodedToken?.id;
+        let roleId = decodedToken?.role;
         return await this.groupService.getGroup(userId, roleId);
     }
 
