@@ -29,7 +29,6 @@ export class GroupRepository extends Repository<GroupModel> {
             qb.andWhere('group.user_id =:userId', { userId: userId });
         else
             qb.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId });
-        qb.orderBy('group.created_at', 'DESC')
         return qb.getMany()
     }
 

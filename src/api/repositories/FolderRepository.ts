@@ -24,7 +24,6 @@ export class FolderRepository extends Repository<FolderModel> {
         else
             qb.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId });
 
-        qb.orderBy('folder.created_at', 'DESC')
         return qb.getMany()
     }
 

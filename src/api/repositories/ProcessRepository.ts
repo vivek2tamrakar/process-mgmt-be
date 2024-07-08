@@ -23,7 +23,6 @@ export class ProcessRepository extends Repository<ProcessModel> {
         else
             qb.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId });
 
-        qb.orderBy('process.created_at', 'DESC')
         return qb.getMany()
     }
 
