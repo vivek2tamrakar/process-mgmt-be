@@ -30,9 +30,9 @@ export class GroupService {
     /* ---------------------- group list ------------------ */
     public async getGroup(userId: number, roleId: number): Promise<GroupModel[] | any> {
         this.log.info(`get group list`)
-        const group = await this.groupRepository.getGroupList(userId,roleId)
-        const folder = await this.folderRepository.getFolderList(userId,roleId)
-        const process = await this.processRepository.getProcessList(userId,roleId);
+        const group = await this.groupRepository.getGroupList(userId, roleId)
+        const folder = await this.folderRepository.getFolderList(userId, roleId)
+        const process = await this.processRepository.getProcessList(userId, roleId);
         return { group, folder, process }
     }
 
@@ -72,6 +72,16 @@ export class GroupService {
         this.log.info(`delete group by ${groupId}`)
         await this.groupRepository.softDelete(groupId)
         return res.status(200).send({ sucess: true, MESSAGE: 'SUCCESSFULLY_DELETE' })
+    }
+
+
+    /* ---------------------- home api with all group,folder,process ------------------ */
+    public async homeData(userId: number): Promise<GroupModel[] | any> {
+        this.log.info(` home api with all group,folder,process`)
+        const group = await this.groupRepository.getHomeData(userId)
+        const folder = await this.folderRepository.getHomeData(userId)
+        const process = await this.processRepository.getHomeData(userId);
+        return { group, folder, process }
     }
 
 }
