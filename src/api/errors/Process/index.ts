@@ -6,3 +6,10 @@ export class ProcessAlreadyError extends HttpError {
         super(406, 'PROCESS_NAME_ALREADY_EXIST');
     }
 }
+
+export class ProcessNotFound extends HttpError {
+
+    constructor() {
+        super(404, 'PROCESS_ID_NOT_FOUND');
+    }
+}

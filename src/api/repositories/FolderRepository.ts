@@ -19,7 +19,7 @@ export class FolderRepository extends Repository<FolderModel> {
             .leftJoin('folder.assign', 'assign')
             .leftJoin('assign.user', 'user')
             .andWhere('folder.group_id IS NULL')
-        if (roleId == UserRolesId.COMPANYID)
+        if (roleId == UserRolesId.COMPANYID || roleId==UserRolesId.TASKMANAGERID )
             qb.andWhere('folder.user_id =:userId', { userId: userId })
         else
             qb.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId });

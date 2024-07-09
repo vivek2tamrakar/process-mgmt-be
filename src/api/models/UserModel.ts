@@ -1,7 +1,8 @@
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity,PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity,OneToMany,PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
 import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
-import { Exclude } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
 import * as bcrypt from 'bcrypt';
+import { TaskModel } from "./TaskModel";
 
 @Entity({name:'users'})
 @Unique(['email'])
@@ -74,5 +75,10 @@ export class UserModel extends BaseEntity {
     @Exclude({ toClassOnly: true })
     @UpdateDateColumn({ name: 'updated_at' })
     public readonly updatedAt: Date;
+
+    @Type(() => TaskModel)
+    @Expose()
+    @OneToMany(type => TaskModel, taskModel => taskModel.userModel)
+    public task: TaskModel;
 
 }

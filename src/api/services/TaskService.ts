@@ -4,6 +4,7 @@ import { Logger, LoggerInterface } from "../../decorators/Logger";
 import { TaskRepository } from "../repositories/TaskRepository";
 import { TaskModel } from "../models/TaskModel";
 import { TaskNotFound } from "../errors/Task";
+import { UserRoles } from "../enums/Users";
 
 @Service()
 export class TaskService {
@@ -40,15 +41,22 @@ export class TaskService {
     }
 
     /* ----------------------update task  ------------ */
-    public async updateTask(body): Promise<TaskModel> {
+    public async updateTask(body, roleId: number): Promise<TaskModel> {
         this.log.info(`update task`)
         let isTaskExist = await this.taskRepository.findOne({ id: body?.id });
-        if (isTaskExist) {
-            isTaskExist.status = body?.status;
+        if (!isTaskExist) throw new TaskNotFound()
+        isTaskExist.status = body?.status;
+        if (roleId == UserRoles.TASKMANAGER) {
             isTaskExist.isActive = body?.isActive;
-            return await this.taskRepository.save(isTaskExist);
+            isTaskExist.name = body?.name;
+            isTaskExist.description = body?.description;
+            isTaskExist.userId = body?.userId;
+            isTaskExist.processId = body?.processId;
+            isTaskExist.startDate = body?.startDate;
+            isTaskExist.endDate = body?.endDate;
+            isTaskExist.duration = body?.duration;
         }
-        throw new TaskNotFound();
+        return await this.taskRepository.save(isTaskExist);
     }
 
     /* ---------------------- delete task ------------ */
@@ -57,5 +65,12 @@ export class TaskService {
         await this.taskRepository.softDelete({ id: taskId })
         return res.status(200).send({ sucess: true, MESSAGE: 'SUCCESSFULLY_DELETE' })
     }
+
+    /* ---------------------- task list ------------ */
+    public async taskList(createdId: number): Promise<TaskModel[]> {
+        this.log.info(`task list by ${createdId}`)
+        return await this.taskRepository.taskList(createdId)
+    }
+
 
 }

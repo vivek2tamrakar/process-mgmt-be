@@ -22,7 +22,7 @@ export class ProcessController {
     ) {
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY,UserRoles.TASKMANAGER])
     @Get('/:id')
     @ResponseSchema(ProcessModel, {
         description: 'get process data by id'
@@ -38,10 +38,19 @@ export class ProcessController {
     public async addImage(@Body() body: any, @Req() req: Request, @Res() res: any): Promise<ProcessModel | any> {
         body.image = env.app.schema + '://' + req.headers['host'] + '/uploads/' + req['files']?.image[0].filename;
         let result = { url: body.image }
-        return res.status(200).send({success:true,result});
+        return res.status(200).send({ success: true, result });
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized(UserRoles.TASKMANAGER)
+    @Post('/copy-process')
+    @ResponseSchema(ProcessModel, {
+        description: 'copy process by taskmanager'
+    })
+    public async copyProcess(@Body() body: ProcessReq, @Req() req: Request): Promise<ProcessModel> {
+        return await this.processService.copyProcess(body)
+    }
+
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
     @Post('/')
     @ResponseSchema(ProcessModel, {
         description: 'add process by company'
@@ -53,16 +62,16 @@ export class ProcessController {
         return await this.processService.addProcess(body)
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
     @Patch('/')
     @ResponseSchema(ProcessModel, {
-        description: 'add process by company'
+        description: 'update process by company'
     })
     public async updateProcess(@Body() body: ProcessReq, @Req() req: Request): Promise<ProcessModel> {
         return await this.processService.updateProcess(body)
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
     @Delete('/:id')
     @ResponseSchema(ProcessModel, {
         description: 'delete process'

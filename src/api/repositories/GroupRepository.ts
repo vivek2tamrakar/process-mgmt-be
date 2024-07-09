@@ -25,7 +25,7 @@ export class GroupRepository extends Repository<GroupModel> {
             .leftJoin('proces.step', 'step')
             .leftJoin('process.step', 'folderStep')
 
-        if (roleId == UserRolesId.COMPANYID)
+        if (roleId == UserRolesId.COMPANYID || roleId == UserRolesId.TASKMANAGERID)
             qb.andWhere('group.user_id =:userId', { userId: userId });
         else
             qb.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId });

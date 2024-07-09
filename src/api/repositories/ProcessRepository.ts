@@ -18,7 +18,7 @@ export class ProcessRepository extends Repository<ProcessModel> {
             .leftJoin('assign.user', 'user')
             .andWhere('process.group_id IS NULL')
             .andWhere('process.folder_id IS NULL')
-        if (roleId == UserRolesId.COMPANYID)
+        if (roleId == UserRolesId.COMPANYID || roleId==UserRolesId.TASKMANAGERID)
             qb.andWhere('process.user_id =:userId', { userId: userId })
         else
             qb.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId });

@@ -4,10 +4,10 @@ import { UserRepository } from "../repositories/UserRepository";
 import { UserModel } from "../models/UserModel";
 import { LoggerInterface } from "../../lib/logger";
 import { Logger } from "../../decorators/Logger";
-import { CompanyError, EmailError } from "../errors/User";
-import { NotFoundError } from "routing-controllers";
+import { CompanyError, EmailError, PasswordError } from "../errors/User";
 // import { AdminMail } from "../../mailers/userMailer";
 import { AdminMail } from "../../mailers/userMailer";
+import { UserNotFoundError } from "../errors/Admin";
 
 @Service()
 export class UserService {
@@ -43,7 +43,7 @@ export class UserService {
         const password = await this.generateRandomPassword(12)
         body.password = await UserModel.hashPassword(password);
         await AdminMail(body?.email, password)
-        body.isActive = false;
+        // body.isActive = false;
         return await this.userRepository.save(body);
     }
 
@@ -63,6 +63,12 @@ export class UserService {
         return await this.userRepository.companyUserList(companyId);
     }
 
+    /* --------------------- get user details by id ------------------*/
+    public async userDetailsById(userId: number): Promise<UserModel> {
+        this.log.info(`get user details by id ${userId}`)
+        return await this.userRepository.userDetailsById(userId);
+    }
+
     /* --------------------- update user -----------------*/
     public async updateUser(body: any): Promise<UserModel> {
         this.log.info(`update user ${body}`)
@@ -74,7 +80,7 @@ export class UserService {
             userData.mobileNumber = body?.mobileNumber;
             return await this.userRepository.save(userData);
         }
-        throw new NotFoundError()
+        throw new UserNotFoundError()
     }
 
     public async deleteUser(id: number, res: any): Promise<UserModel> {
@@ -84,7 +90,49 @@ export class UserService {
             await this.userRepository.softDelete({ id: id });
             return res.status(200).send({ success: true, MESSAGE: 'SUCCESSFULLY_DELETE' })
         }
-        throw new NotFoundError()
+        throw new UserNotFoundError()
+    }
+
+    /* --------------------- update profile by the user -----------------*/
+    public async updateProfile(body: any): Promise<UserModel> {
+        this.log.info(`update profile by the user ${body}`)
+        const userData = await this.userRepository.findOne({ id: body?.id });
+        if (userData) {
+            userData.name = body?.name;
+            userData.mobileNumber = body?.mobileNumber;
+            return await this.userRepository.save(userData);
+        }
+        throw new UserNotFoundError()
+    }
+
+    /* --------------------- update profile by the user -----------------*/
+    public async changePassword(body: any): Promise<UserModel> {
+        this.log.info(`update profile by the user ${body}`)
+        const userData = await this.userRepository.findOne({ id: body?.id });
+        if (userData) {
+            const isPassword = await UserModel.comparePassword(userData, body['oldPassword'])
+            if (isPassword) {
+                const hashPassword = await UserModel.hashPassword(body['newPassword']);
+                userData.password = hashPassword;
+                return await this.userRepository.save(userData);
+            }
+            throw new PasswordError()
+        }
+        throw new UserNotFoundError();
+    }
+
+
+    /* --------------------- forget password by the user -----------------*/
+    public async forgetPassword(body: any): Promise<UserModel> {
+        this.log.info(`forget password by the user ${body}`)
+        const isEmailExist = await this.userRepository.findOne({ email: body?.email });
+        if (isEmailExist) {
+            const password = await this.generateRandomPassword(12);
+            isEmailExist.password = await UserModel.hashPassword(password);
+            await AdminMail(body?.email, password)
+            return await this.userRepository.save(isEmailExist)
+        }
+        throw new UserNotFoundError();
     }
 
 
