@@ -19,6 +19,16 @@ export class UserController {
     ) {
     }
 
+    @Authorized([UserRoles.TASKMANAGER,UserRoles.EMPLOYEE,UserRoles.COMPANY])
+    @Get('/user-details/:id')
+    @ResponseSchema(UserModel, {
+        description: 'get user details by id',
+        isArray: true
+    })
+    public async userDetailsById(@Param('id') id: number): Promise<UserModel> {
+        return await this.userService.userDetailsById(id)
+    }
+
     @Authorized(UserRoles.COMPANY)
     @Get('/list/:companyId')
     @ResponseSchema(UserModel, {
@@ -57,6 +67,33 @@ export class UserController {
     public async updateUser(@Body() body: any, @Req() req: Request): Promise<UserModel> {
         return await this.userService.updateUser(body);
     }
+
+    @Authorized([UserRoles.COMPANY, UserRoles.EMPLOYEE, UserRoles.TASKMANAGER, UserRoles.ADMIN, UserRoles.MANAGER])
+    @Patch('/update-profile')
+    @ResponseSchema(UserModel, {
+        description: 'update profile by the user'
+    })
+    public async updateProfile(@Body() body: any, @Req() req: Request): Promise<UserModel> {
+        return await this.userService.updateProfile(body);
+    }
+
+    @Authorized([UserRoles.COMPANY, UserRoles.EMPLOYEE, UserRoles.TASKMANAGER, UserRoles.ADMIN, UserRoles.MANAGER])
+    @Patch('/change-password')
+    @ResponseSchema(UserModel, {
+        description: 'change password by the user'
+    })
+    public async changePassword(@Body() body: any, @Req() req: Request): Promise<UserModel> {
+        return await this.userService.changePassword(body);
+    }
+
+    @Patch('/forget-password')
+    @ResponseSchema(UserModel, {
+        description: 'forget password by the user'
+    })
+    public async forgetPassword(@Body() body: any, @Req() req: Request): Promise<UserModel> {
+        return await this.userService.forgetPassword(body);
+    }
+
 
     @Authorized(UserRoles.COMPANY)
     @Delete('/:id')

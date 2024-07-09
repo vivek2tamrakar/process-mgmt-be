@@ -3,6 +3,7 @@ import { IsNotEmpty, IsOptional } from "class-validator";
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { GroupModel } from "./GroupModel";
 import { UserModel } from "./UserModel";
+import { ProcessModel } from "./ProcessModel";
 
 @Entity({ name: 'task' })
 export class TaskModel extends BaseEntity {
@@ -99,4 +100,17 @@ export class TaskModel extends BaseEntity {
     @OneToOne(type => UserModel, userModel => userModel.id)
     public user: UserModel
 
+    @JoinColumn({ name: 'process_id' })
+    @OneToOne(type => ProcessModel, processModel => processModel.id)
+    public process: ProcessModel;
+
+    
+    @JoinColumn({ name: 'group_id' })
+    @OneToOne(type => GroupModel, groupModel => groupModel.id)
+    public group: GroupModel;
+
+    @Type(() =>UserModel )
+    @OneToOne(type => UserModel, userModel => userModel.task, { cascade: true })
+    @JoinColumn({ name: 'user_id' })
+    public userModel: UserModel;
 }

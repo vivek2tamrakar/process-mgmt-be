@@ -19,7 +19,7 @@ export class GroupController {
     ) {
     }
 
-    @Authorized([UserRoles.COMPANY])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
     @Get('/home')
     @ResponseSchema(GroupModel, {
         description: 'home api',
@@ -31,7 +31,7 @@ export class GroupController {
         return await this.groupService.homeData(userId);
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.EMPLOYEE])
     @Get('/list')
     @ResponseSchema(GroupModel, {
         description: 'get Group List',
@@ -55,7 +55,7 @@ export class GroupController {
     }
 
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
     @Post('/')
     @ResponseSchema(GroupModel, {
         description: 'add group by company'
@@ -67,7 +67,7 @@ export class GroupController {
         return await this.groupService.addGroup(body, id)
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
     @Patch('/')
     @ResponseSchema(GroupModel, {
         description: 'edit group ,folder,process'
@@ -76,7 +76,7 @@ export class GroupController {
         return await this.groupService.editGroupFolderProcess(body)
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
     @Delete('/:id')
     @ResponseSchema(GroupModel, {
         description: 'delete group'

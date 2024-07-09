@@ -15,7 +15,7 @@ export class StepController {
     ) {
     }
 
-    @Authorized([UserRoles.COMPANY,UserRoles.TASKMANAGER])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER,UserRoles.EMPLOYEE])
     @Patch('/')
     @ResponseSchema(StepModel, {
         description: 'update run checklist'
@@ -24,7 +24,7 @@ export class StepController {
         return await this.stepService.updateRunChecklist(body)
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
     @Delete('/:id')
     @ResponseSchema(StepModel, {
         description: 'delete step'

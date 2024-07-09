@@ -34,3 +34,9 @@ export class NotFoundError extends HttpError {
     }
 
 }
+
+export class PasswordError extends HttpError {
+    constructor(){
+        super(406,'PASSWORD_MIS_MATCH')
+    }
+}

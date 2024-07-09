@@ -19,7 +19,7 @@ export class FolderController {
     ) {
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
     @Get('/:id')
     @ResponseSchema(FolderModel, {
         description: 'get folder data by id'
@@ -28,7 +28,7 @@ export class FolderController {
         return await this.folderService.folderDataById(id)
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.ADMIN])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
     @Post('/')
     @ResponseSchema(FolderModel, {
         description: 'add folder by user'
@@ -40,7 +40,7 @@ export class FolderController {
         return await this.folderService.addFolder(body)
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
     @Delete('/:id')
     @ResponseSchema(FolderModel, {
         description: 'delete folder'

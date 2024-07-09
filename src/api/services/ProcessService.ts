@@ -5,7 +5,7 @@ import { OrmRepository } from "typeorm-typedi-extensions";
 import { ProcessModel } from "../models/ProcessModel";
 import { ProcessRepository } from "../repositories/ProcessRepository";
 import { StepRepository } from "../repositories/StepRepository";
-import { ProcessAlreadyError } from "../errors/Process";
+import { ProcessAlreadyError, ProcessNotFound } from "../errors/Process";
 // import { NotFound } from "../errors/Group";
 
 
@@ -70,6 +70,31 @@ export class ProcessService {
             return await this.stepRepository.save({ processId: body?.id, stepDescription: body?.stepDescription });
         }
         return saveProcessData;
+    }
+
+
+    /* ------------------ copy process------------------ */
+    public async copyProcess(body: any): Promise<ProcessModel | any> {
+        this.log.info(`copy process ${body}`)
+        let copyProcessData;
+        const processData = await this.processRepository.findOne({ id: body?.id });
+        if (!processData)
+            throw new ProcessNotFound();
+        const { name, groupId, tags, description, folderId } = processData;
+        copyProcessData = await this.processRepository.save({
+            userId: body?.userId, name, folderId, groupId, tags, description
+        });
+        const stepData = await this.stepRepository.find({ processId: body?.id });
+        if (stepData?.length) {
+            const copyStepData = stepData?.map((ele) => ({
+                processId: copyProcessData?.id,
+                stepDescription: ele?.stepDescription,
+                isCompleted: ele?.isCompleted,
+                lastReview: ele?.lastReview
+            }))
+            await this.stepRepository.save(copyStepData);
+        }
+        return processData;
     }
 
 

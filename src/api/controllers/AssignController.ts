@@ -39,7 +39,7 @@ export class AssignController {
         return await this.assignService.processList(decodedToken?.id);
     }
 
-    // @Authorized([UserRoles.TASKMANAGER, UserRoles.EMPLOYEE])
+    @Authorized([UserRoles.TASKMANAGER, UserRoles.EMPLOYEE])
     @Get('/group-id/:id')
     @ResponseSchema(AssignModel, {
         description: `particular group's users`,

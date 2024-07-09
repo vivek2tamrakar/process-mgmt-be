@@ -10,4 +10,14 @@ export class UserRepository extends Repository<UserModel> {
         return qb.getMany();
     }
 
+    public async userDetailsById(userId: number): Promise<UserModel> {
+        const qb = await this.createQueryBuilder('users')
+        .select([
+            'users',
+            'task'
+        ])
+            .leftJoin('users.task', 'task')
+            .andWhere('users.id =:id', { id: userId })
+        return qb.getOne()
+    }
 }
