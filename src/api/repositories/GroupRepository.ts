@@ -29,7 +29,6 @@ export class GroupRepository extends Repository<GroupModel> {
             qb.andWhere('group.user_id =:userId', { userId: userId });
         else
             qb.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId });
-        qb.orderBy('group.created_at', 'DESC')
         return qb.getMany()
     }
 
@@ -47,6 +46,18 @@ export class GroupRepository extends Repository<GroupModel> {
             .leftJoin('task.user', 'taskUser')
             .andWhere('group.id =:groupId', { groupId: groupId })
         return qb.getOne()
+    }
+
+
+    public async getHomeData(userId: number): Promise<GroupModel[] | any> {
+        const qb = await this.createQueryBuilder('group')
+            .select([
+                'group.id', 'group.name', 'group.createdAt',
+            ])
+
+        qb.andWhere('group.user_id =:userId', { userId: userId });
+        qb.orderBy('group.created_at', 'DESC')
+        return qb.getMany()
     }
 
 }

@@ -24,7 +24,6 @@ export class FolderRepository extends Repository<FolderModel> {
         else
             qb.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId });
 
-        qb.orderBy('folder.created_at', 'DESC')
         return qb.getMany()
     }
 
@@ -39,6 +38,16 @@ export class FolderRepository extends Repository<FolderModel> {
             .leftJoin('process.step', 'step')
             .andWhere('folder.id=:id', { id: id })
         return qb.getOne()
+    }
+
+    public async getHomeData(userId: number): Promise<FolderModel[] | any> {
+        const qb = await this.createQueryBuilder('folder')
+            .select([
+                'folder.id', 'folder.name', 'folder.createdAt',
+            ])
+        qb.andWhere('folder.user_id =:userId', { userId: userId })
+        qb.orderBy('folder.created_at', 'DESC')
+        return qb.getMany()
     }
 
 }

@@ -23,7 +23,6 @@ export class ProcessRepository extends Repository<ProcessModel> {
         else
             qb.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId });
 
-        qb.orderBy('process.created_at', 'DESC')
         return qb.getMany()
     }
 
@@ -39,5 +38,14 @@ export class ProcessRepository extends Repository<ProcessModel> {
         return qb.getOne()
     }
 
+    public async getHomeData(userId: number): Promise<ProcessModel[]> {
+        const qb = await this.createQueryBuilder('process')
+            .select([
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description'
+            ])
+        qb.andWhere('process.user_id =:userId', { userId: userId })
+        qb.orderBy('process.created_at', 'DESC')
+        return qb.getMany()
+    }
 
 }

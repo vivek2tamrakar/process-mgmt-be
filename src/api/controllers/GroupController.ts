@@ -19,7 +19,19 @@ export class GroupController {
     ) {
     }
 
-    @Authorized([UserRoles.COMPANY,UserRoles.TASKMANAGER])
+    @Authorized([UserRoles.COMPANY])
+    @Get('/home')
+    @ResponseSchema(GroupModel, {
+        description: 'home api',
+        isArray: true
+    })
+    public async homeData(@Req() req: Request): Promise<GroupModel[]> {
+        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
+        let userId = decodedToken?.id;
+        return await this.groupService.homeData(userId);
+    }
+
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
     @Get('/list')
     @ResponseSchema(GroupModel, {
         description: 'get Group List',
@@ -28,7 +40,7 @@ export class GroupController {
     public async getGroup(@Req() req: Request): Promise<GroupModel[]> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         let userId = decodedToken?.id;
-        let roleId = decodedToken?.id;
+        let roleId = decodedToken?.role;
         return await this.groupService.getGroup(userId, roleId);
     }
 
