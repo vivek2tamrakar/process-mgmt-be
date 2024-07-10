@@ -4,7 +4,7 @@ import { Service } from "typedi";
 import { StepService } from "../services/StepService";
 import { StepModel } from "../models/StepModel";
 import { Response } from "express";
-import { UserRoles } from "../enums/Users";
+import { allRoles, UserRoles } from "../enums/Users";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/step')
@@ -15,7 +15,7 @@ export class StepController {
     ) {
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER,UserRoles.EMPLOYEE])
+    @Authorized(allRoles)
     @Patch('/')
     @ResponseSchema(StepModel, {
         description: 'update run checklist'
@@ -24,7 +24,7 @@ export class StepController {
         return await this.stepService.updateRunChecklist(body)
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN])
     @Delete('/:id')
     @ResponseSchema(StepModel, {
         description: 'delete step'

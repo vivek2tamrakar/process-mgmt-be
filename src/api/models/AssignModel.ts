@@ -70,5 +70,6 @@ export class AssignModel extends BaseEntity {
 
     @JoinColumn({ name: 'process_id' })
     @OneToOne(type => ProcessModel, processModel => processModel.id)
-    public process: ProcessModel
+    public process: ProcessModel;
+
 } 

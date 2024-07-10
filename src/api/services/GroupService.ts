@@ -7,12 +7,14 @@ import { Logger } from "../../decorators/Logger";
 import { GroupError, NotFound } from "../errors/Group";
 import { FolderRepository } from "../repositories/FolderRepository";
 import { ProcessRepository } from "../repositories/ProcessRepository";
+// import { UserService } from "./UserService";
 
 @Service()
 export class GroupService {
 
     constructor(
         @Logger(__filename) private log: LoggerInterface,
+        // @Service() private userService: UserService,
         @OrmRepository() private groupRepository: GroupRepository,
         @OrmRepository() private folderRepository: FolderRepository,
         @OrmRepository() private processRepository: ProcessRepository
@@ -28,12 +30,12 @@ export class GroupService {
     }
 
     /* ---------------------- group list ------------------ */
-    public async getGroup(userId: number, roleId: number): Promise<GroupModel[] | any> {
+    public async getGroup(userId: number): Promise<GroupModel[] | any> {
         this.log.info(`get group list`)
-        const group = await this.groupRepository.getGroupList(userId, roleId)
-        const folder = await this.folderRepository.getFolderList(userId, roleId)
-        const process = await this.processRepository.getProcessList(userId, roleId);
-        return { group, folder, process }
+        const group = await this.groupRepository.getGroupList(userId)
+        const folder = await this.folderRepository.getFolderList(userId)
+        const process = await this.processRepository.getProcessList(userId,);
+        return { group: group?.created, assignGroup: group?.assign, folder: folder?.created, assignFolder: folder?.assign, process: process?.created, assignProcess: process?.assign }
     }
 
     /* ---------------------- assign groups user ------------ */

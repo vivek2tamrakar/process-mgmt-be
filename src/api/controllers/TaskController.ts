@@ -3,7 +3,7 @@ import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { TaskModel } from "../models/TaskModel";
 import { TaskService } from "../services/TaskService";
-import { UserRoles } from "../enums/Users";
+import { allRoles, UserRoles } from "../enums/Users";
 import { Response } from "express";
 import { DecodeTokenService } from "../services/DecodeTokenService";
 
@@ -18,18 +18,19 @@ export class TaskController {
     ) {
     }
 
-    @Authorized(UserRoles.TASKMANAGER)
-    @Get('/list')
+    @Authorized([UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN,UserRoles.COMPANY])
+    @Get('/list/:userId')
     @ResponseSchema(TaskModel, {
-        description: 'task list by task manager',
+        description: 'task list',
         isArray: true
     })
-    public async taskList(@Req() req: any): Promise<TaskModel[]> {
-        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
-        return await this.taskService.taskList(decodedToken?.id)
+    public async taskList(@Param('userId') userId:number, @Req() req: any): Promise<TaskModel[]> {
+        // const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
+        // return await this.taskService.taskList(decodedToken?.id)
+        return await this.taskService.taskList(userId)
     }
 
-    @Authorized([UserRoles.TASKMANAGER])
+    @Authorized([UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN,UserRoles.COMPANY])
     @Post('/')
     @ResponseSchema(TaskModel, {
         description: 'add task',
@@ -39,7 +40,7 @@ export class TaskController {
         return await this.taskService.addTask(body)
     }
 
-    @Authorized([UserRoles.TASKMANAGER,UserRoles.EMPLOYEE])
+    @Authorized(allRoles)
     @Patch('/')
     @ResponseSchema(TaskModel, {
         description: 'update task',
@@ -50,7 +51,7 @@ export class TaskController {
         return await this.taskService.updateTask(body,roleId)
     }
 
-    @Authorized(UserRoles.TASKMANAGER)
+    @Authorized([UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN,UserRoles.COMPANY])
     @Delete('/:id')
     @ResponseSchema(TaskModel, {
         description: 'delete task'

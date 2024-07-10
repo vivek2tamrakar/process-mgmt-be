@@ -46,7 +46,7 @@ export class TaskService {
         let isTaskExist = await this.taskRepository.findOne({ id: body?.id });
         if (!isTaskExist) throw new TaskNotFound()
         isTaskExist.status = body?.status;
-        if (roleId == UserRoles.TASKMANAGER) {
+        if (roleId == UserRoles.TASKMANAGER || roleId==UserRoles.ADMIN || roleId==UserRoles.MANAGER || UserRoles.COMPANY) {
             isTaskExist.isActive = body?.isActive;
             isTaskExist.name = body?.name;
             isTaskExist.description = body?.description;
