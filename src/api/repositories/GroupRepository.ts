@@ -1,11 +1,11 @@
 import { EntityRepository, Repository } from "typeorm";
 import { GroupModel } from "../models/GroupModel";
-import { UserRolesId } from "../enums/Users";
 
 @EntityRepository(GroupModel)
 export class GroupRepository extends Repository<GroupModel> {
 
-    public async getGroupList(userId: number, roleId: number): Promise<GroupModel[] | any> {
+    public async getGroupList(userId: number): Promise<GroupModel[] | any> {
+        let assign, created;
         const qb = await this.createQueryBuilder('group')
             .select([
                 'group.id', 'group.name', 'group.createdAt',
@@ -25,11 +25,11 @@ export class GroupRepository extends Repository<GroupModel> {
             .leftJoin('proces.step', 'step')
             .leftJoin('process.step', 'folderStep')
 
-        if (roleId == UserRolesId.COMPANYID || roleId == UserRolesId.TASKMANAGERID)
-            qb.andWhere('group.user_id =:userId', { userId: userId });
-        else
-            qb.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId });
-        return qb.getMany()
+        const createdQuery = qb.clone();
+        created = await createdQuery.andWhere('group.user_id = :userId', { userId: userId }).getMany();
+        const assignQuery = qb.clone();
+        assign = await assignQuery.andWhere('assign.assign_user_id = :assignUserId', { assignUserId: userId }).getMany();
+        return { created, assign }
     }
 
     public async assignGroupsUser(groupId: number): Promise<GroupModel> {

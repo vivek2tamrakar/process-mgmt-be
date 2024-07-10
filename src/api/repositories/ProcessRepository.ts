@@ -1,11 +1,11 @@
 import { EntityRepository, Repository } from "typeorm";
 import { ProcessModel } from "../models/ProcessModel";
-import { UserRolesId } from "../enums/Users";
 
 @EntityRepository(ProcessModel)
 export class ProcessRepository extends Repository<ProcessModel> {
 
-    public async getProcessList(userId: number, roleId: number): Promise<ProcessModel[]> {
+    public async getProcessList(userId: number): Promise<ProcessModel[] | any> {
+        let assign, created;
         const qb = await this.createQueryBuilder('process')
             .select([
                 'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt',
@@ -18,12 +18,11 @@ export class ProcessRepository extends Repository<ProcessModel> {
             .leftJoin('assign.user', 'user')
             .andWhere('process.group_id IS NULL')
             .andWhere('process.folder_id IS NULL')
-        if (roleId == UserRolesId.COMPANYID || roleId==UserRolesId.TASKMANAGERID)
-            qb.andWhere('process.user_id =:userId', { userId: userId })
-        else
-            qb.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId });
-
-        return qb.getMany()
+        const createdQuery = qb.clone();
+        created = await createdQuery.andWhere('process.user_id =:userId', { userId: userId }).getMany();
+        const assignQuery = qb.clone();
+        assign = await assignQuery.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId }).getMany();
+        return { created, assign }
     }
 
     public async processDataById(processId: number): Promise<ProcessModel> {

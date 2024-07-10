@@ -8,6 +8,7 @@ import { CompanyError, EmailError, PasswordError } from "../errors/User";
 // import { AdminMail } from "../../mailers/userMailer";
 import { AdminMail } from "../../mailers/userMailer";
 import { UserNotFoundError } from "../errors/Admin";
+import { UserRoles } from "../enums/Users";
 
 @Service()
 export class UserService {
@@ -60,7 +61,10 @@ export class UserService {
     /* --------------------- company user list ------------------*/
     public async companyUserList(companyId: number): Promise<UserModel[]> {
         this.log.info(`get company user's list ${companyId}`)
-        return await this.userRepository.companyUserList(companyId);
+        const companyData = await this.userInfoById(companyId);
+        if (companyData?.role == UserRoles.COMPANY)
+            return await this.userRepository.companyUserList(companyId);
+        return await this.userRepository.companyUserList(companyData?.createdById);
     }
 
     /* --------------------- get user details by id ------------------*/

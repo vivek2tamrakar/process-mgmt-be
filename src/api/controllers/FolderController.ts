@@ -19,7 +19,7 @@ export class FolderController {
     ) {
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN])
     @Get('/:id')
     @ResponseSchema(FolderModel, {
         description: 'get folder data by id'
@@ -28,10 +28,10 @@ export class FolderController {
         return await this.folderService.folderDataById(id)
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN])
     @Post('/')
     @ResponseSchema(FolderModel, {
-        description: 'add folder by user'
+        description: 'add folder'
     })
     public async addFolder(@Body() body: folderReq, @Req() req: Request): Promise<FolderModel> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
@@ -40,7 +40,7 @@ export class FolderController {
         return await this.folderService.addFolder(body)
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN])
     @Delete('/:id')
     @ResponseSchema(FolderModel, {
         description: 'delete folder'

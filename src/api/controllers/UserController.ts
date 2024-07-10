@@ -2,7 +2,7 @@ import { Authorized, Body, Delete, Get, JsonController, Param, Patch, Post, Req,
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { UserService } from "../services/UserService";
-import { UserRoles } from "../enums/Users";
+import { allRoles, UserRoles } from "../enums/Users";
 import { UserModel } from "../models/UserModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
 import { Request } from "express";
@@ -19,7 +19,7 @@ export class UserController {
     ) {
     }
 
-    @Authorized([UserRoles.TASKMANAGER,UserRoles.EMPLOYEE,UserRoles.COMPANY])
+    @Authorized(allRoles)
     @Get('/user-details/:id')
     @ResponseSchema(UserModel, {
         description: 'get user details by id',
@@ -29,14 +29,14 @@ export class UserController {
         return await this.userService.userDetailsById(id)
     }
 
-    @Authorized(UserRoles.COMPANY)
-    @Get('/list/:companyId')
+    @Authorized([UserRoles.COMPANY,UserRoles.ADMIN,UserRoles.MANAGER,UserRoles.TASKMANAGER])
+    @Get('/list/:userId')
     @ResponseSchema(UserModel, {
         description: 'list of companies user',
         isArray: true
     })
-    public async companyUserList(@Param('companyId') companyId: number): Promise<UserModel[]> {
-        return await this.userService.companyUserList(companyId)
+    public async companyUserList(@Param('userId') userId: number): Promise<UserModel[]> {
+        return await this.userService.companyUserList(userId)
     }
 
     @Post('/company')
@@ -48,10 +48,10 @@ export class UserController {
         return await this.userService.addCompany(body);
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY,UserRoles.ADMIN])
     @Post('/')
     @ResponseSchema(UserModel, {
-        description: 'add users of company'
+        description: 'add users'
     })
     public async addUser(@Body() body: any, @Req() req: Request): Promise<UserModel> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
@@ -59,7 +59,7 @@ export class UserController {
         return await this.userService.addUser(body, req.headers['authorization']);
     }
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY,UserRoles.ADMIN])
     @Patch('/')
     @ResponseSchema(UserModel, {
         description: 'update user of company'
@@ -68,7 +68,7 @@ export class UserController {
         return await this.userService.updateUser(body);
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.EMPLOYEE, UserRoles.TASKMANAGER, UserRoles.ADMIN, UserRoles.MANAGER])
+    @Authorized(allRoles)
     @Patch('/update-profile')
     @ResponseSchema(UserModel, {
         description: 'update profile by the user'
@@ -77,7 +77,7 @@ export class UserController {
         return await this.userService.updateProfile(body);
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.EMPLOYEE, UserRoles.TASKMANAGER, UserRoles.ADMIN, UserRoles.MANAGER])
+    @Authorized(allRoles)
     @Patch('/change-password')
     @ResponseSchema(UserModel, {
         description: 'change password by the user'
@@ -95,7 +95,7 @@ export class UserController {
     }
 
 
-    @Authorized(UserRoles.COMPANY)
+    @Authorized([UserRoles.COMPANY,UserRoles.ADMIN])
     @Delete('/:id')
     @ResponseSchema(UserModel, {
         description: 'update user of company'

@@ -14,7 +14,8 @@ export class UserRepository extends Repository<UserModel> {
         const qb = await this.createQueryBuilder('users')
         .select([
             'users',
-            'task'
+            'task',
+            
         ])
             .leftJoin('users.task', 'task')
             .andWhere('users.id =:id', { id: userId })

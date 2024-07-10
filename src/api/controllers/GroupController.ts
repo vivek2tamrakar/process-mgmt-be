@@ -2,7 +2,7 @@ import { Authorized, Body, Delete, Get, JsonController, Param, Patch, Post, Req,
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { GroupService } from "../services/GroupService";
-import { UserRoles } from "../enums/Users";
+import { allRoles, UserRoles } from "../enums/Users";
 import { GroupModel } from "../models/GroupModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
 import { Request, Response } from "express";
@@ -19,32 +19,32 @@ export class GroupController {
     ) {
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
-    @Get('/home')
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN])
+    @Get('/home/:userId')
     @ResponseSchema(GroupModel, {
         description: 'home api',
         isArray: true
     })
-    public async homeData(@Req() req: Request): Promise<GroupModel[]> {
-        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
-        let userId = decodedToken?.id;
+    public async homeData(@Param('userId') userId:number,@Req() req: Request): Promise<GroupModel[]> {
+        // const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
+        // let userId = decodedToken?.id;
         return await this.groupService.homeData(userId);
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.EMPLOYEE])
-    @Get('/list')
+    @Authorized(allRoles)
+    @Get('/list/:userId')
     @ResponseSchema(GroupModel, {
         description: 'get Group List',
         isArray: true
     })
-    public async getGroup(@Req() req: Request): Promise<GroupModel[]> {
-        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
-        let userId = decodedToken?.id;
-        let roleId = decodedToken?.role;
-        return await this.groupService.getGroup(userId, roleId);
+    public async getGroup(@Param('userId') userId:number,@Req() req: Request): Promise<GroupModel[]> {
+        // const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
+        // let userId = decodedToken?.id;
+        // let roleId = decodedToken?.role;
+        return await this.groupService.getGroup(userId);
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.MANAGER, UserRoles.TASKMANAGER, UserRoles.EMPLOYEE])
+    @Authorized(allRoles)
     @Get('/id/:id')
     @ResponseSchema(GroupModel, {
         description: 'get Group List',
@@ -55,10 +55,10 @@ export class GroupController {
     }
 
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN])
     @Post('/')
     @ResponseSchema(GroupModel, {
-        description: 'add group by company'
+        description: 'add group'
     })
     public async addGroup(@Body() body: GroupReq, @Req() req: Request): Promise<GroupModel> {
         await validateOrReject(GroupReq)
@@ -67,7 +67,7 @@ export class GroupController {
         return await this.groupService.addGroup(body, id)
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN])
     @Patch('/')
     @ResponseSchema(GroupModel, {
         description: 'edit group ,folder,process'
@@ -76,7 +76,7 @@ export class GroupController {
         return await this.groupService.editGroupFolderProcess(body)
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN])
     @Delete('/:id')
     @ResponseSchema(GroupModel, {
         description: 'delete group'

@@ -78,11 +78,10 @@ export class ProcessService {
         this.log.info(`copy process ${body}`)
         let copyProcessData;
         const processData = await this.processRepository.findOne({ id: body?.id });
-        if (!processData)
-            throw new ProcessNotFound();
-        const { name, groupId, tags, description, folderId } = processData;
+        if (!processData) throw new ProcessNotFound();
+        const { name, tags, description } = processData;
         copyProcessData = await this.processRepository.save({
-            userId: body?.userId, name, folderId, groupId, tags, description
+            userId: body?.userId, name, folderId: body?.folderId, groupId: body?.groupId, tags, description
         });
         const stepData = await this.stepRepository.find({ processId: body?.id });
         if (stepData?.length) {
