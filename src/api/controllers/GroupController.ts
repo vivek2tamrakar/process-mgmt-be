@@ -19,7 +19,7 @@ export class GroupController {
     ) {
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN,UserRoles.EMPLOYEE])
     @Get('/home/:userId')
     @ResponseSchema(GroupModel, {
         description: 'home api',
