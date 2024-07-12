@@ -1,4 +1,4 @@
-import { Authorized, Body, Delete, Get, JsonController, Param, Patch, Post, Req, Res } from "routing-controllers";
+import { Authorized, Body, Delete, Get, JsonController, Param, Patch, Post, Req, Res, UseBefore } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { UserService } from "../services/UserService";
@@ -8,6 +8,9 @@ import { DecodeTokenService } from "../services/DecodeTokenService";
 import { Request } from "express";
 import { companyReq } from "./requests/Company";
 import { validateOrReject } from "class-validator";
+import { env } from "../../env";
+import multer from 'multer';
+import { fileUploadOptions } from "../fileUpload";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/users')
@@ -29,7 +32,7 @@ export class UserController {
         return await this.userService.userDetailsById(id)
     }
 
-    @Authorized([UserRoles.COMPANY,UserRoles.ADMIN,UserRoles.MANAGER,UserRoles.TASKMANAGER])
+    @Authorized([UserRoles.COMPANY, UserRoles.ADMIN, UserRoles.MANAGER, UserRoles.TASKMANAGER])
     @Get('/list/:userId')
     @ResponseSchema(UserModel, {
         description: 'list of companies user',
@@ -48,7 +51,7 @@ export class UserController {
         return await this.userService.addCompany(body);
     }
 
-    @Authorized([UserRoles.COMPANY,UserRoles.ADMIN])
+    @Authorized([UserRoles.COMPANY, UserRoles.ADMIN])
     @Post('/')
     @ResponseSchema(UserModel, {
         description: 'add users'
@@ -59,7 +62,7 @@ export class UserController {
         return await this.userService.addUser(body, req.headers['authorization']);
     }
 
-    @Authorized([UserRoles.COMPANY,UserRoles.ADMIN])
+    @Authorized([UserRoles.COMPANY, UserRoles.ADMIN])
     @Patch('/')
     @ResponseSchema(UserModel, {
         description: 'update user of company'
@@ -70,10 +73,17 @@ export class UserController {
 
     @Authorized(allRoles)
     @Patch('/update-profile')
+    @UseBefore(multer(fileUploadOptions).fields([
+        { maxCount: 1, name: 'profilePic' },
+    ]))
     @ResponseSchema(UserModel, {
-        description: 'update profile by the user'
+        contentType: 'multipart/form-data',
+        description: 'update user profile',
     })
     public async updateProfile(@Body() body: any, @Req() req: Request): Promise<UserModel> {
+        if (req['files']?.profilePic) {
+            body.profilePic = env.app.schema + '://' + req.headers['host'] + '/uploads/' + req['files']?.profilePic[0].filename;
+        }
         return await this.userService.updateProfile(body);
     }
 
@@ -95,7 +105,7 @@ export class UserController {
     }
 
 
-    @Authorized([UserRoles.COMPANY,UserRoles.ADMIN])
+    @Authorized([UserRoles.COMPANY, UserRoles.ADMIN])
     @Delete('/:id')
     @ResponseSchema(UserModel, {
         description: 'update user of company'

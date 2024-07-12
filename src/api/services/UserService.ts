@@ -99,11 +99,12 @@ export class UserService {
 
     /* --------------------- update profile by the user -----------------*/
     public async updateProfile(body: any): Promise<UserModel> {
-        this.log.info(`update profile by the user ${body}`)
+        this.log.info(`update profile by the user `)
         const userData = await this.userRepository.findOne({ id: body?.id });
         if (userData) {
             userData.name = body?.name;
             userData.mobileNumber = body?.mobileNumber;
+            userData.profilePic = body?.profilePic;
             return await this.userRepository.save(userData);
         }
         throw new UserNotFoundError()
