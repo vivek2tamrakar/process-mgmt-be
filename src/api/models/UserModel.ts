@@ -1,10 +1,10 @@
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity,OneToMany,PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
 import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
 import { Exclude, Expose, Type } from "class-transformer";
 import * as bcrypt from 'bcrypt';
 import { TaskModel } from "./TaskModel";
 
-@Entity({name:'users'})
+@Entity({ name: 'users' })
 @Unique(['email'])
 export class UserModel extends BaseEntity {
 
@@ -38,7 +38,7 @@ export class UserModel extends BaseEntity {
     @IsEmail()
     @Column({ name: 'email' })
     public email: string;
- 
+
     @IsNotEmpty()
     @Column({ name: 'password' })
     public password: string;
@@ -62,6 +62,10 @@ export class UserModel extends BaseEntity {
     @IsNotEmpty()
     @Column({ name: 'role' })
     public role: number;
+
+    @IsOptional()
+    @Column({ name: 'profile_pic' })
+    public profilePic: string;
 
     @Exclude()
     @Exclude({ toClassOnly: true })
