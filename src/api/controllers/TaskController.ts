@@ -1,4 +1,4 @@
-import { Authorized, Body, Delete, Get, JsonController, Param, Patch, Post, Req, Res } from "routing-controllers";
+import { Authorized, Body, Delete, JsonController, Param, Patch, Post, Req, Res } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { TaskModel } from "../models/TaskModel";
@@ -16,18 +16,6 @@ export class TaskController {
         @Service() private taskService: TaskService,
         @Service() private decodeTokenService: DecodeTokenService
     ) {
-    }
-
-    @Authorized([UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN,UserRoles.COMPANY])
-    @Get('/list/:userId')
-    @ResponseSchema(TaskModel, {
-        description: 'task list',
-        isArray: true
-    })
-    public async taskList(@Param('userId') userId:number, @Req() req: any): Promise<TaskModel[]> {
-        // const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
-        // return await this.taskService.taskList(decodedToken?.id)
-        return await this.taskService.taskList(userId)
     }
 
     @Authorized([UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN,UserRoles.COMPANY])
