@@ -9,6 +9,7 @@ import { CompanyError, EmailError, PasswordError } from "../errors/User";
 import { AdminMail } from "../../mailers/userMailer";
 import { UserNotFoundError } from "../errors/Admin";
 import { UserRoles } from "../enums/Users";
+import  MessageResponse  from "../message";
 
 @Service()
 export class UserService {
@@ -21,7 +22,13 @@ export class UserService {
     /* ------------- user info by id ---------------------- */
     public async userInfoById(userId: number): Promise<UserModel> {
         this.log.info(`userIngo by id ${userId}`)
-        return await this.userRepository.findOne({ id: userId })
+        const user = await this.userRepository.createQueryBuilder('user')
+            .select(['user.id', 'user.name', 'user.email', 'user.isActive', 'user.fcmToken', 'user.profilePic', 'user.mobileNumber', 'user.role', 'user.createdById'])
+            .where('user.id = :id', { id: userId })
+            .getOne();
+
+        return user;
+        // return await this.userRepository.findOne({ id: userId })
     }
 
     public async generateRandomPassword(length = 12) {
@@ -98,14 +105,17 @@ export class UserService {
     }
 
     /* --------------------- update profile by the user -----------------*/
-    public async updateProfile(body: any): Promise<UserModel> {
+    public async updateProfile(body: any): Promise<UserModel | any> {
         this.log.info(`update profile by the user `)
         const userData = await this.userRepository.findOne({ id: body?.id });
         if (userData) {
             userData.name = body?.name;
             userData.mobileNumber = body?.mobileNumber;
             userData.profilePic = body?.profilePic;
-            return await this.userRepository.save(userData);
+            const res = await this.userRepository.save(userData);
+            return { id: res?.id, email: res?.email, createdById: res?.createdById, isActive: res?.isActive, fcmToken: res?.fcmToken, role: res?.role, profilePic: res?.profilePic, updatedAt: res?.updatedAt,
+                message:MessageResponse.UPDATE
+             }
         }
         throw new UserNotFoundError()
     }

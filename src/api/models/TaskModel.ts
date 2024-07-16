@@ -42,6 +42,10 @@ export class TaskModel extends BaseEntity {
     @IsOptional()
     @Column({ name: 'start_date' })
     public startDate: Date;
+    
+    @IsOptional()
+    @Column({ name: 'is_recurren' })
+    public isRecurren: boolean;
 
     @IsOptional()
     @Column({ name: 'end_date' })

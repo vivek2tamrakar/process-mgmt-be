@@ -60,6 +60,7 @@ export class ProcessService {
             processData.folderId = body?.folderId;
             processData.groupId = body?.groupId;
             processData.description = body?.description;
+            processData.updatedAt=new Date();
             saveProcessData = await this.processRepository.save(processData);
         }
         if (body?.stepId) {

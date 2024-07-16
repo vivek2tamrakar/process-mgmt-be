@@ -9,7 +9,12 @@ export class TaskRepository extends Repository<TaskModel> {
         const date = new Date();
         const dayOfWeek = date.getDay();
         const qb = await this.createQueryBuilder('task')
-            .andWhere(`DATE_FORMAT(task.recurren_end_date ,'%y-%m-%d') >=DATE_FORMAT(:endDate,'%y-%m-%d')`, { endDate: date })
+            .andWhere('task.is_recurren =:isRecurren', { isRecurren: true })
+            .andWhere(`(
+                DATE_FORMAT(task.recurren_end_date ,'%y-%m-%d') >= DATE_FORMAT(:endDate, '%y-%m-%d')
+                OR task.recurren_end_date IS NULL
+            )`,
+                { endDate: date })
 
         const yearClone = qb.clone();
         const yearCreateTask = await yearClone.andWhere('task.recurren_type =:yearly', { yearly: Task.YEARLY })
@@ -44,7 +49,8 @@ export class TaskRepository extends Repository<TaskModel> {
             duration: ele?.duration,
             remainder: ele?.remainder,
             isDayTask: ele?.isDayTask,
-            isProcess: ele?.isProcess
+            isProcess: ele?.isProcess,
+            isRecurren: false
         }))
         await getRepository(TaskModel).save(modifyData);
     }
