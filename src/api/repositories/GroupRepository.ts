@@ -15,7 +15,10 @@ export class GroupRepository extends Repository<GroupModel> {
                 'assign.id',
                 'user.id', 'user.email',
                 'step.id', 'step.stepDescription', 'step.isCompleted', 'step.createdAt', 'step.lastReview', 'step.updatedAt',
-                'folderStep.id', 'folderStep.stepDescription', 'folderStep.isCompleted', 'folderStep.lastReview', 'folderStep.updatedAt', 'folderStep.createdAt'
+                'folderStep.id', 'folderStep.stepDescription', 'folderStep.isCompleted', 'folderStep.lastReview', 'folderStep.updatedAt', 'folderStep.createdAt',
+                'task.id', 'task.name', 'task.status', 'task.description', 'task.startDate', 'task.endDate', 'task.duration', 'task.createdAt', 'task.isActive', 'task.isDayTask', 'task.isProcess',
+                'taskUser.id', 'taskUser.name',
+                'taskProcess.id', 'taskProcess.name',
             ])
             .leftJoin('group.folder', 'folder')
             .leftJoin('folder.process', 'process')
@@ -24,6 +27,9 @@ export class GroupRepository extends Repository<GroupModel> {
             .leftJoin('assign.user', 'user')
             .leftJoin('proces.step', 'step')
             .leftJoin('process.step', 'folderStep')
+            .leftJoin('group.task', 'task')
+            .leftJoin('task.process', 'taskProcess')
+            .leftJoin('task.user', 'taskUser')
 
         const createdQuery = qb.clone();
         created = await createdQuery.andWhere('group.user_id = :userId', { userId: userId }).getMany();

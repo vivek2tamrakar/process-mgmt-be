@@ -6,7 +6,7 @@ import { expressLoader } from './loaders/expressLoader';
 import { homeLoader } from './loaders/homeLoader';
 import { iocLoader } from './loaders/iocLoader';
 import { publicLoader } from './loaders/publicLoader';
-
+import { cronJobLoader } from './loaders/cronJobLoader';
 import { typeormLoader } from './loaders/typeormLoader'; // database connectivity
 import { winstonLoader } from './loaders/winstonLoader';
 // @ts-ignore
@@ -35,6 +35,7 @@ bootstrapMicroframework({
         expressLoader,
         homeLoader,
         publicLoader,
+        cronJobLoader
     ] : [
         winstonLoader,
         iocLoader,
@@ -43,6 +44,7 @@ bootstrapMicroframework({
         expressLoader,
         homeLoader,
         publicLoader,
+        cronJobLoader
     ],
 })
     .then(() => banner(log))

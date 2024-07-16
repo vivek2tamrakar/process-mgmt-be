@@ -104,13 +104,12 @@ export class TaskModel extends BaseEntity {
     @OneToOne(type => ProcessModel, processModel => processModel.id)
     public process: ProcessModel;
 
-    
-    @JoinColumn({ name: 'group_id' })
-    @OneToOne(type => GroupModel, groupModel => groupModel.id)
-    public group: GroupModel;
-
     @Type(() =>UserModel )
     @OneToOne(type => UserModel, userModel => userModel.task, { cascade: true })
     @JoinColumn({ name: 'user_id' })
     public userModel: UserModel;
+
+    @JoinColumn({ name: 'group_id' })
+    @OneToOne(type => GroupModel, groupModel => groupModel.id)
+    public group: GroupModel;
 }

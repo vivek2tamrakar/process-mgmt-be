@@ -108,7 +108,7 @@ export class UserController {
     @Authorized([UserRoles.COMPANY, UserRoles.ADMIN])
     @Delete('/:id')
     @ResponseSchema(UserModel, {
-        description: 'update user of company'
+        description: 'delete user '
     })
     public async deleteUser(@Param('id') id: number, @Res() res: any): Promise<UserModel> {
         return await this.userService.deleteUser(id, res);

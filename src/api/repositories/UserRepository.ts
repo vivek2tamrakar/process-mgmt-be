@@ -13,11 +13,16 @@ export class UserRepository extends Repository<UserModel> {
     public async userDetailsById(userId: number): Promise<UserModel> {
         const qb = await this.createQueryBuilder('users')
         .select([
-            'users',
+            'users.id', 'users.name', 'users.email', 'users.isActive', 'users.fcmToken', 'users.mobileNumber', 'users.profilePic', 'users.role',
             'task',
-            
+            'process.id', 'process.name',
+            'group.id', 'group.name',
+            'createdByTask.id','createdByTask.name'
         ])
             .leftJoin('users.task', 'task')
+            .leftJoin('task.process','process')
+            .leftJoin('task.group','group')
+            .leftJoin('task.user','createdByTask')
             .andWhere('users.id =:id', { id: userId })
         return qb.getOne()
     }

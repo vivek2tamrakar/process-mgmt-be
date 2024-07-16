@@ -46,7 +46,7 @@ export class TaskService {
         let isTaskExist = await this.taskRepository.findOne({ id: body?.id });
         if (!isTaskExist) throw new TaskNotFound()
         isTaskExist.status = body?.status;
-        if (roleId == UserRoles.TASKMANAGER || roleId==UserRoles.ADMIN || roleId==UserRoles.MANAGER || UserRoles.COMPANY) {
+        if (roleId == UserRoles.TASKMANAGER || roleId == UserRoles.ADMIN || roleId == UserRoles.MANAGER || UserRoles.COMPANY) {
             isTaskExist.isActive = body?.isActive;
             isTaskExist.name = body?.name;
             isTaskExist.description = body?.description;
@@ -66,10 +66,10 @@ export class TaskService {
         return res.status(200).send({ sucess: true, MESSAGE: 'SUCCESSFULLY_DELETE' })
     }
 
-    /* ---------------------- task list ------------ */
-    public async taskList(createdId: number): Promise<TaskModel[]> {
-        this.log.info(`task list by ${createdId}`)
-        return await this.taskRepository.taskList(createdId)
+    /* ---------------------- createTaskWithCron task ------------ */
+    public async createTaskWithCron() {
+        this.log.info(`createTaskWithCron`)
+        await this.taskRepository.createTaskWithCron();
     }
 
 
