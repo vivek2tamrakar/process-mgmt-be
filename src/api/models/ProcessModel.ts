@@ -48,7 +48,7 @@ export class ProcessModel extends BaseEntity {
 
     @Exclude({ toClassOnly: true })
     @UpdateDateColumn({ name: 'updated_at' })
-    public readonly updatedAt: Date;
+    public updatedAt: Date;
 
 
     @Type(() => FolderModel)

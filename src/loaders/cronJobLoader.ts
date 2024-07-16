@@ -9,7 +9,7 @@ export const cronJobLoader: MicroframeworkLoader = async (settings: Microframewo
         // return;
         const taskService = Container.get(TaskService);
 
-        /* ----------  first cron job on every 2 minutes -----------*/
+        /* ----------  first cron job on every day at  12 pm -----------*/
         const firstCronJob = new cron.CronJob(`0 12 * * *`, async () => {
             await taskService.createTaskWithCron();
         });
