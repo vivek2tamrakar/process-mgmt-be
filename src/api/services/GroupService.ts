@@ -34,7 +34,7 @@ export class GroupService {
         this.log.info(`get group list`)
         const group = await this.groupRepository.getGroupList(userId)
         const folder = await this.folderRepository.getFolderList(userId)
-        const process = await this.processRepository.getProcessList(userId,);
+        const process = await this.processRepository.getProcessList(userId);
         return { group: group?.created, assignGroup: group?.assign, folder: folder?.created, assignFolder: folder?.assign, process: process?.created, assignProcess: process?.assign }
     }
 

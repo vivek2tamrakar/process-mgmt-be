@@ -49,4 +49,32 @@ export class FolderRepository extends Repository<FolderModel> {
         return qb.getMany()
     }
 
+    public async searchFolder(userId: number, filter: any): Promise<FolderModel[] | any> {
+        let assign, created;
+        const qb = await this.createQueryBuilder('folder')
+            .select([
+                'folder.id', 'folder.name', 'folder.createdAt',
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt',
+                'step.id', 'step.stepDescription', 'step.isCompleted', 'step.lastReview', 'step.updatedAt',
+                'assign.id',
+                'user.id', 'user.email',
+                'comment.id', 'comment.name', 'comment.userId', 'comment.createdAt', 'comment.updatedAt',
+                'commentedBy.id', 'commentedBy.name'
+            ])
+            .leftJoin('folder.process', 'process')
+            .leftJoin('process.step', 'step')
+            .leftJoin('folder.assign', 'assign')
+            .leftJoin('process.comment', 'comment')
+            .leftJoin('comment.user', 'commentedBy')
+            .leftJoin('assign.user', 'user')
+            .andWhere('folder.group_id IS NULL')
+        if (filter.tags)
+            qb.andWhere(` process.tags LIKE :tags`, { tags: `%${filter.tags}%` });
+        const createdQuery = qb.clone();
+        created = await createdQuery.andWhere('folder.user_id =:userId', { userId: userId }).getMany();
+        const assignQuery = qb.clone();
+        assign = await assignQuery.andWhere('assign.assign_user_id=:assignUserId', { assignUserId: userId }).getMany();
+        return [...created, ...assign]
+    }
+
 }
