@@ -5,6 +5,8 @@ import { FolderModel } from "./FolderModel";
 import { GroupModel } from "./GroupModel";
 import { StepModel } from "./StepModel";
 import { AssignModel } from "./AssignModel";
+import { UserModel } from "./UserModel";
+import { CommentsModel } from "./CommentsModel";
 
 
 @Entity({ name: 'process' })
@@ -71,5 +73,20 @@ export class ProcessModel extends BaseEntity {
     @OneToMany(type => AssignModel, assignModel => assignModel.processModel)
     public assign: AssignModel;
 
-    
+    @JoinColumn({ name: 'group_id' })
+    @OneToOne(type => GroupModel, groupModel => groupModel.id)
+    public group: GroupModel;
+
+    @JoinColumn({ name: 'folder_id' })
+    @OneToOne(type => FolderModel, folderModel => folderModel.id)
+    public folder: FolderModel;
+
+    @JoinColumn({ name: 'user_id' })
+    @OneToOne(type => UserModel, userModel => userModel.id)
+    public user: UserModel;
+
+    @Type(() => CommentsModel)
+    @Expose()
+    @OneToMany(type => CommentsModel, commentsModel => commentsModel.processModel)
+    public comment: CommentsModel;
 }

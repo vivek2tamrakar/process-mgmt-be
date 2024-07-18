@@ -6,8 +6,8 @@ import { ProcessModel } from "../models/ProcessModel";
 import { ProcessRepository } from "../repositories/ProcessRepository";
 import { StepRepository } from "../repositories/StepRepository";
 import { ProcessAlreadyError, ProcessNotFound } from "../errors/Process";
-// import { NotFound } from "../errors/Group";
-
+import { FolderRepository } from "../repositories/FolderRepository";
+import { GroupRepository } from "../repositories/GroupRepository";
 
 @Service()
 export class ProcessService {
@@ -15,7 +15,9 @@ export class ProcessService {
     constructor(
         @Logger(__filename) private log: LoggerInterface,
         @OrmRepository() private processRepository: ProcessRepository,
-        @OrmRepository() private stepRepository: StepRepository
+        @OrmRepository() private stepRepository: StepRepository,
+        @OrmRepository() private folderRepository: FolderRepository,
+        @OrmRepository() private groupRepository: GroupRepository
     ) { }
 
     /* ------------------ add process------------------ */
@@ -60,7 +62,7 @@ export class ProcessService {
             processData.folderId = body?.folderId;
             processData.groupId = body?.groupId;
             processData.description = body?.description;
-            processData.updatedAt=new Date();
+            processData.updatedAt = new Date();
             saveProcessData = await this.processRepository.save(processData);
         }
         if (body?.stepId) {
@@ -82,7 +84,7 @@ export class ProcessService {
         if (!processData) throw new ProcessNotFound();
         const { name, tags, description } = processData;
         copyProcessData = await this.processRepository.save({
-            userId: body?.userId, name:`copy-${name}`, folderId: body?.folderId, groupId: body?.groupId, tags, description
+            userId: body?.userId, name: `copy-${name}`, folderId: body?.folderId, groupId: body?.groupId, tags, description
         });
         const stepData = await this.stepRepository.find({ processId: body?.id });
         if (stepData?.length) {
@@ -95,6 +97,15 @@ export class ProcessService {
             await this.stepRepository.save(copyStepData);
         }
         return processData;
+    }
+
+    /* ---------------------- search process data ----------- */
+    public async searchProcess(param: any, userId: number): Promise<ProcessModel[]> {
+        this.log.info(`get process data search`)
+        const processData = await this.processRepository.searchProcess(userId, param);
+        const folderData = await this.folderRepository.searchFolder(userId, param);
+        const groupData = await this.groupRepository.searchGroup(userId, param)
+        return [...processData, ...folderData, ...groupData]
     }
 
 

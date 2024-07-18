@@ -1,8 +1,8 @@
-import { Authorized, Body, Delete, Get, JsonController, Param, Patch, Post, Req, Res, UseBefore } from "routing-controllers";
+import { Authorized, Body, Delete, Get, JsonController, Param, Patch, Post, QueryParams, Req, Res, UseBefore } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { ProcessService } from "../services/ProcessService";
-import { UserRoles } from "../enums/Users";
+import { allRoles, UserRoles } from "../enums/Users";
 import { ProcessModel } from "../models/ProcessModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
 import { Request, Response } from "express";
@@ -22,10 +22,20 @@ export class ProcessController {
     ) {
     }
 
-    @Authorized([UserRoles.COMPANY,UserRoles.TASKMANAGER,UserRoles.ADMIN,UserRoles.MANAGER])
+    @Authorized(allRoles)
+    @Get('/search/:id')
+    @ResponseSchema(ProcessModel, {
+        description: 'search data',
+        isArray: true
+    })
+    public async searchProcess(@QueryParams() param: any, @Param('id') id: number): Promise<ProcessModel[]> {
+        return await this.processService.searchProcess(param, id)
+    }
+
+    @Authorized(allRoles)
     @Get('/:id')
     @ResponseSchema(ProcessModel, {
-        description: 'get process data by id'
+        description: 'get process data by id '
     })
     public async processDataById(@Param('id') id: number): Promise<ProcessModel> {
         return await this.processService.processDataById(id);
@@ -41,7 +51,7 @@ export class ProcessController {
         return res.status(200).send({ success: true, result });
     }
 
-    @Authorized([UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.COMPANY,UserRoles.ADMIN])
+    @Authorized([UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.COMPANY, UserRoles.ADMIN])
     @Post('/copy-process')
     @ResponseSchema(ProcessModel, {
         description: 'copy process '
@@ -50,7 +60,7 @@ export class ProcessController {
         return await this.processService.copyProcess(body)
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN])
     @Post('/')
     @ResponseSchema(ProcessModel, {
         description: 'add process '
@@ -62,7 +72,7 @@ export class ProcessController {
         return await this.processService.addProcess(body)
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN])
     @Patch('/')
     @ResponseSchema(ProcessModel, {
         description: 'update process '
@@ -71,7 +81,7 @@ export class ProcessController {
         return await this.processService.updateProcess(body)
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN])
     @Delete('/:id')
     @ResponseSchema(ProcessModel, {
         description: 'delete process'
