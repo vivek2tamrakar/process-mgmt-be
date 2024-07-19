@@ -5,11 +5,12 @@ import { UserModel } from "../models/UserModel";
 import { LoggerInterface } from "../../lib/logger";
 import { Logger } from "../../decorators/Logger";
 import { CompanyError, EmailError, PasswordError } from "../errors/User";
-// import { AdminMail } from "../../mailers/userMailer";
+import { ProcessMail } from "../../mailers/userMailer";
 import { AdminMail } from "../../mailers/userMailer";
 import { UserNotFoundError } from "../errors/Admin";
 import { UserRoles } from "../enums/Users";
-import  MessageResponse  from "../message";
+import MessageResponse from "../message";
+import { ProcessService } from "./ProcessService";
 
 @Service()
 export class UserService {
@@ -17,6 +18,7 @@ export class UserService {
     constructor(
         @Logger(__filename) private log: LoggerInterface,
         @OrmRepository() private userRepository: UserRepository,
+        @Service() private processService: ProcessService
     ) { }
 
     /* ------------- user info by id ---------------------- */
@@ -113,9 +115,10 @@ export class UserService {
             userData.mobileNumber = body?.mobileNumber;
             userData.profilePic = body?.profilePic;
             const res = await this.userRepository.save(userData);
-            return { id: res?.id, email: res?.email, createdById: res?.createdById, isActive: res?.isActive, fcmToken: res?.fcmToken, role: res?.role, profilePic: res?.profilePic, updatedAt: res?.updatedAt,
-                message:MessageResponse.UPDATE
-             }
+            return {
+                id: res?.id, email: res?.email, createdById: res?.createdById, isActive: res?.isActive, fcmToken: res?.fcmToken, role: res?.role, profilePic: res?.profilePic, updatedAt: res?.updatedAt,
+                message: MessageResponse.UPDATE
+            }
         }
         throw new UserNotFoundError()
     }
@@ -148,6 +151,23 @@ export class UserService {
             return await this.userRepository.save(isEmailExist)
         }
         throw new UserNotFoundError();
+    }
+
+    /* ----------------------------- send a email to users -----------*/
+    public async sendEmailToUsers(body: any, res: any): Promise<UserModel | any> {
+        const { senderId, receiverId, processId } = body;
+        try {
+            const userData = await this.userInfoById(senderId);
+            const processData = await this.processService.processData(processId);
+            processData['senderName'] = userData?.name;
+            Promise.all(receiverId?.map(async (ele) => {
+                const receiverData = await this.userInfoById(ele);
+                await ProcessMail(receiverData.email, processData)
+            }))
+            return res.status(200).send({ success: true, MESSAGE: 'EMAIL_SUCCESSFULLY_SENT' })
+        } catch (error) {
+            throw error;
+        }
     }
 
 

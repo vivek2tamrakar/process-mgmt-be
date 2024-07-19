@@ -51,6 +51,17 @@ export class UserController {
         return await this.userService.addCompany(body);
     }
 
+    @Authorized([UserRoles.COMPANY, UserRoles.ADMIN, UserRoles.MANAGER, UserRoles.TASKMANAGER])
+    @Post('/send-email')
+    @ResponseSchema(UserModel, {
+        description: 'send a email'
+    })
+    public async sendEmailToUsers(@Body() body: any, @Req() req: Request, @Res() res: any): Promise<UserModel> {
+        const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
+        body.senderId = decodedToken?.id;
+        return await this.userService.sendEmailToUsers(body, res);
+    }
+
     @Authorized([UserRoles.COMPANY, UserRoles.ADMIN])
     @Post('/')
     @ResponseSchema(UserModel, {
