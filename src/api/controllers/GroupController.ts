@@ -26,8 +26,6 @@ export class GroupController {
         isArray: true
     })
     public async homeData(@Param('userId') userId:number,@Req() req: Request): Promise<GroupModel[]> {
-        // const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
-        // let userId = decodedToken?.id;
         return await this.groupService.homeData(userId);
     }
 
@@ -38,9 +36,6 @@ export class GroupController {
         isArray: true
     })
     public async getGroup(@Param('userId') userId:number,@Req() req: Request): Promise<GroupModel[]> {
-        // const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
-        // let userId = decodedToken?.id;
-        // let roleId = decodedToken?.role;
         return await this.groupService.getGroup(userId);
     }
 

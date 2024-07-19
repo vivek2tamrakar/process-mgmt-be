@@ -6,8 +6,6 @@ import { ProcessModel } from "../models/ProcessModel";
 import { ProcessRepository } from "../repositories/ProcessRepository";
 import { StepRepository } from "../repositories/StepRepository";
 import { ProcessAlreadyError, ProcessNotFound } from "../errors/Process";
-import { FolderRepository } from "../repositories/FolderRepository";
-import { GroupRepository } from "../repositories/GroupRepository";
 
 @Service()
 export class ProcessService {
@@ -16,8 +14,6 @@ export class ProcessService {
         @Logger(__filename) private log: LoggerInterface,
         @OrmRepository() private processRepository: ProcessRepository,
         @OrmRepository() private stepRepository: StepRepository,
-        @OrmRepository() private folderRepository: FolderRepository,
-        @OrmRepository() private groupRepository: GroupRepository
     ) { }
 
     /* ------------------ add process------------------ */
@@ -99,13 +95,18 @@ export class ProcessService {
         return processData;
     }
 
+    /* ------------------- get processData by id ---------- */
+    public async processData(processId: number): Promise<ProcessModel> {
+        this.log.info(`get process data by id ${processId}`)
+        return await this.processRepository.findOne(processId)
+    }
+
+
     /* ---------------------- search process data ----------- */
     public async searchProcess(param: any, userId: number): Promise<ProcessModel[]> {
         this.log.info(`get process data search`)
-        const processData = await this.processRepository.searchProcess(userId, param);
-        const folderData = await this.folderRepository.searchFolder(userId, param);
-        const groupData = await this.groupRepository.searchGroup(userId, param)
-        return [...processData, ...folderData, ...groupData]
+        return await this.processRepository.searchProcess(userId, param);
+
     }
 
 

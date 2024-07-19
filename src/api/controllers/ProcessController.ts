@@ -22,7 +22,7 @@ export class ProcessController {
     ) {
     }
 
-    @Authorized(allRoles)
+    // @Authorized(allRoles)
     @Get('/search/:id')
     @ResponseSchema(ProcessModel, {
         description: 'search data',
