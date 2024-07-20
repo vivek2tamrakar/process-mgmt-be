@@ -1,4 +1,4 @@
-import { Authorized, Body, JsonController, Post } from "routing-controllers";
+import { Authorized, Body, Get, JsonController, Post } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { CommentService } from "../services/CommentService";
@@ -21,6 +21,14 @@ export class CommentController {
     })
     public async addComment(@Body() body: any): Promise<CommentsModel> {
         return await this.commentService.addComment(body)
+    }
+    @Authorized(allRoles)
+    @Get('/')
+    @ResponseSchema(CommentsModel, {
+        description: 'Get comment '
+    })
+    public async getComment(@Body() body: any): Promise<CommentsModel[]> {
+        return await this.commentService.getComments(body)
     }
 
 
