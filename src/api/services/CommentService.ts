@@ -21,9 +21,9 @@ export class CommentService {
         return await this.commentsRepository.save(body)
     }
     /* ------------------- add ommnet ---------------- */
-    public async getComments(body): Promise<CommentsModel[]> {
+    public async getComments(processId): Promise<CommentsModel[]> {
         this.log.info('add commnets')
-        return  await this.commentsRepository.getCommentList(body?.processId)
+        return  await this.commentsRepository.getCommentList(processId)
     }
 
 }
