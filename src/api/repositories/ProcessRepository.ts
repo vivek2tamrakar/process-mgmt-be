@@ -75,6 +75,7 @@ console.log('qb',qb.getQuery());
     LEFT JOIN folder ON process.folder_id = folder.id
 WHERE
     process.user_id = ${userId}
+    AND process.deleted_at IS NULL
      ${filter.tags ? `AND process.tags LIKE '%${filter.tags}%'` : ''}
        `);
 
@@ -115,6 +116,7 @@ WHERE
             LEFT JOIN(SELECT DISTINCT p.id FROM process p
                JOIN assign ag ON ag.group_id = p.group_id WHERE ag.assign_user_id = ${userId}) AS group_access ON p.id = group_access.id
             LEFT JOIN(SELECT DISTINCT p.id FROM process p JOIN assign af ON af.folder_id = p.folder_id WHERE af.assign_user_id =  ${userId}) AS folder_access ON p.id = folder_access.id WHERE (a.assign_user_id =  ${userId} OR group_access.id IS NOT NULL OR folder_access.id IS NOT NULL )
+            AND p.deleted_at IS NULL
              ${filter.tags ? `AND p.tags LIKE '%${filter.tags}%'` : ''}
             `);
         return [...create, ...folderGroupAssign]
