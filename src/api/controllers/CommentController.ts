@@ -14,7 +14,7 @@ export class CommentController {
     ) {
     }
 
-    @Authorized(allRoles)
+    // @Authorized(allRoles)
     @Post('/')
     @ResponseSchema(CommentsModel, {
         description: 'add comment '
@@ -22,7 +22,7 @@ export class CommentController {
     public async addComment(@Body() body: any): Promise<CommentsModel> {
         return await this.commentService.addComment(body)
     }
-    @Authorized(allRoles)
+    // @Authorized(allRoles)
     @Get('/:id')
     @ResponseSchema(CommentsModel, {
         description: 'Get comment '
