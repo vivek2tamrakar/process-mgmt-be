@@ -1,9 +1,9 @@
-import { Authorized, Body, Get, JsonController, Param, Post } from "routing-controllers";
+import {  Body, Get, JsonController, Param, Post } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { CommentService } from "../services/CommentService";
 import { CommentsModel } from "../models/CommentsModel";
-import { allRoles } from "../enums/Users";
+// import { allRoles } from "../enums/Users";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/comment')
