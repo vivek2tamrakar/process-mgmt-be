@@ -55,5 +55,32 @@ export class TaskRepository extends Repository<TaskModel> {
         await getRepository(TaskModel).save(modifyData);
     }
 
+    public async getTaskByUserId(userId: number, filter: any): Promise<TaskModel[]> {
+        const date = new Date();
+        const qb = await this.createQueryBuilder('task')
+            .select([
+                'task',
+                'group.id', 'group.name',
+                'assignUsers.id', 'assignUsers.email', 'assignUsers.name',
+                'process.id', 'process.name', 'process.description', 'process.tags'
+            ])
+            .leftJoin('task.group', 'group')
+            .leftJoin('task.user', 'assignUsers')
+            .leftJoin('task.process', 'process')
+
+        if (filter.today == 'true') {
+            qb.andWhere(`DATE(task.start_date) = DATE(:today)`, { today: date });
+        } else if (filter.weekly == 'true') {
+            qb.andWhere(`DATE(task.start_date) >= DATE(:today) AND DATE(task.start_date) <= DATE_ADD(DATE(:today), INTERVAL 7 DAY)`, { today: date });
+        } else if (filter.monthly == 'true') {
+            qb.andWhere(`DATE(task.start_date) >= DATE(:today) AND DATE(task.start_date) <=DATE_ADD(DATE(:today), INTERVAL 1 MONTH)`, { today: date });
+        }
+
+        const createdTaskClone = qb.clone()
+        const createTask = await createdTaskClone.andWhere('task.created_id =:createdId', { createdId: userId }).getMany()
+        const assignTask = await qb.andWhere('task.user_id =:userId', { userId: userId }).getMany()
+        return [...createTask, ...assignTask];
+    }
+
 
 }

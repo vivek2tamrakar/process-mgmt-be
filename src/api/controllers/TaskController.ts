@@ -1,4 +1,4 @@
-import { Authorized, Body, Delete, JsonController, Param, Patch, Post, Req, Res } from "routing-controllers";
+import { Authorized, Body, Delete, Get, JsonController, Param, Patch, Post, QueryParams, Req, Res } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { TaskModel } from "../models/TaskModel";
@@ -18,13 +18,22 @@ export class TaskController {
     ) {
     }
 
-    @Authorized([UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN,UserRoles.COMPANY])
+    // @Authorized(allRoles)
+    @Get('/:id')
+    @ResponseSchema(TaskModel, {
+        description: 'task assign and create by the user and get by user id',
+        isArray: true
+    })
+    public async getTaskByUserId(@Param('id') id: number,@QueryParams() param:any): Promise<TaskModel[]> {
+        return await this.taskService.getTaskByUserId(id,param)
+    }
+
+    @Authorized([UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN, UserRoles.COMPANY])
     @Post('/')
     @ResponseSchema(TaskModel, {
         description: 'add task',
     })
     public async addTask(@Body() body: any): Promise<TaskModel> {
-
         return await this.taskService.addTask(body)
     }
 
@@ -33,13 +42,13 @@ export class TaskController {
     @ResponseSchema(TaskModel, {
         description: 'update task',
     })
-    public async updateTask(@Body() body: any,@Req() req:any): Promise<TaskModel> {
+    public async updateTask(@Body() body: any, @Req() req: any): Promise<TaskModel> {
         const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         let roleId = decodedToken?.role;
-        return await this.taskService.updateTask(body,roleId)
+        return await this.taskService.updateTask(body, roleId)
     }
 
-    @Authorized([UserRoles.TASKMANAGER,UserRoles.MANAGER,UserRoles.ADMIN,UserRoles.COMPANY])
+    @Authorized([UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN, UserRoles.COMPANY])
     @Delete('/:id')
     @ResponseSchema(TaskModel, {
         description: 'delete task'

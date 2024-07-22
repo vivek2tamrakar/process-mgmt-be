@@ -72,5 +72,10 @@ export class TaskService {
         await this.taskRepository.createTaskWithCron();
     }
 
+    /* ------------------- get assign and create task ----------- */
+    public async getTaskByUserId(userId:number,param:any):Promise<TaskModel[]>{
+        this.log.info(`get task whose create by the user and assign to this user ${userId}`)
+        return await this.taskRepository.getTaskByUserId(userId,param);
+    }
 
 }
