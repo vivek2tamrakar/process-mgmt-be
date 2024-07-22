@@ -22,7 +22,7 @@ export class ProcessController {
     ) {
     }
 
-    // @Authorized(allRoles)
+    @Authorized(allRoles)
     @Get('/search/:id')
     @ResponseSchema(ProcessModel, {
         description: 'search data',
@@ -51,7 +51,6 @@ export class ProcessController {
         return res.status(200).send({ success: true, result });
     }
 
-    @Authorized([UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.COMPANY, UserRoles.ADMIN])
     @Post('/copy-process')
     @ResponseSchema(ProcessModel, {
         description: 'copy process '
