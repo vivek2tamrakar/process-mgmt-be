@@ -39,6 +39,14 @@ export class ProcessModel extends BaseEntity {
     @Column({ name: 'description' })
     public description: string;
 
+    @IsOptional()
+    @Column({ name: 'is_review' })
+    public isReview: boolean;
+
+    @IsOptional()
+    @Column({ name: 'review_date' })
+    public reviewDate: Date;
+
     @Exclude()
     @Exclude({ toClassOnly: true })
     @DeleteDateColumn({ name: 'deleted_at' })

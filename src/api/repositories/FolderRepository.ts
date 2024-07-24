@@ -9,7 +9,7 @@ export class FolderRepository extends Repository<FolderModel> {
         const qb = await this.createQueryBuilder('folder')
             .select([
                 'folder.id', 'folder.name', 'folder.createdAt',
-                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt',
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt', 'process.isReview', 'process.reviewDate',
                 'step.id', 'step.stepDescription', 'step.isCompleted', 'step.lastReview', 'step.updatedAt',
                 'assign.id',
                 'user.id', 'user.email',
@@ -30,7 +30,7 @@ export class FolderRepository extends Repository<FolderModel> {
         const qb = await this.createQueryBuilder('folder')
             .select([
                 'folder.id', 'folder.name',
-                'process.id', 'process.name', 'process.tags', 'process.description', 'process.createdAt', 'process.updatedAt',
+                'process.id', 'process.name', 'process.tags', 'process.description', 'process.createdAt', 'process.updatedAt','process.isReview', 'process.reviewDate',
                 'step.id', 'step.stepDescription', 'step.isCompleted', 'step.lastReview', 'step.updatedAt'
             ])
             .leftJoin('folder.process', 'process')
@@ -54,7 +54,7 @@ export class FolderRepository extends Repository<FolderModel> {
         const qb = await this.createQueryBuilder('folder')
             .select([
                 'folder.id', 'folder.name', 'folder.createdAt',
-                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt',
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt','process.isReview', 'process.reviewDate',
                 'step.id', 'step.stepDescription', 'step.isCompleted', 'step.lastReview', 'step.updatedAt',
                 'assign.id',
                 'user.id', 'user.email',

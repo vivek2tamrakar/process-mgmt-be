@@ -8,7 +8,7 @@ export class ProcessRepository extends Repository<ProcessModel> {
         let assign, created;
         const qb = await this.createQueryBuilder('process')
             .select([
-                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt',
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt', 'process.isReview', 'process.reviewDate',
                 'step.id', 'step.stepDescription', 'step.isCompleted', 'step.lastReview', 'step.updatedAt',
                 'assign.id',
                 'user.id', 'user.email',
@@ -29,7 +29,7 @@ export class ProcessRepository extends Repository<ProcessModel> {
         const qb = await this.createQueryBuilder('process')
             .select([
                 'process.id', 'process.name', 'process.groupId', 'process.folderId', 'process.tags',
-                'process.description', 'process.createdAt', 'process.updatedAt', 'process.tags', 'process.description',
+                'process.description', 'process.createdAt', 'process.updatedAt', 'process.tags', 'process.description', 'process.isReview', 'process.reviewDate',
                 'step.id', 'step.stepDescription',
                 'folder.id', 'folder.name',
                 'group.id', 'group.name',
@@ -51,7 +51,7 @@ export class ProcessRepository extends Repository<ProcessModel> {
     public async getHomeData(userId: number): Promise<ProcessModel[]> {
         const qb = await this.createQueryBuilder('process')
             .select([
-                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description'
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.isReview', 'process.reviewDate',
             ])
         qb.andWhere('process.user_id =:userId', { userId: userId })
         qb.orderBy('process.created_at', 'DESC')
@@ -59,7 +59,6 @@ export class ProcessRepository extends Repository<ProcessModel> {
     }
 
     public async searchProcess(userId: number, filter: any): Promise<ProcessModel[] | any> {
-
         const create = await this.query(`SELECT
     process.id,
     process.name,
@@ -67,6 +66,8 @@ export class ProcessRepository extends Repository<ProcessModel> {
     process.tags,
     process.description,
     process.updated_at as updatedAt,
+    process.is_review as isReview,
+    process.review_date as reviewDate,
     process.deleted_at as deletedAt,
     users.id AS userId,
     users.email,
@@ -82,8 +83,8 @@ export class ProcessRepository extends Repository<ProcessModel> {
     LEFT JOIN folder ON process.folder_id = folder.id
 WHERE
     process.user_id = ${userId}
-     ${filter.tags ? `AND process.tags LIKE '%${filter.tags}%'` : ''}
-       `);
+    ${filter.tags ? `AND (process.tags LIKE '%${filter.tags}%' OR process.name LIKE '%${filter.tags}%')` : ''}
+    `);
 
         // WHERE process.user_id = ${userId}
 
@@ -108,6 +109,7 @@ WHERE
         const folderGroupAssign = await this.query(`SELECT DISTINCT 
             p.id as id,p.name as name,p.user_id as userId ,p.group_id as groupId,p.folder_id as folderId,
             p.tags as tags,p.description as description ,p.created_at as createdAt,
+            p.is_review as isReview,p.review_date as reviewDate,
             p.updated_at as updatedAt,p.deleted_at as deletedAt,
             f.name as folderName,
             u.email as email,
@@ -122,8 +124,9 @@ WHERE
             LEFT JOIN(SELECT DISTINCT p.id FROM process p
                JOIN assign ag ON ag.group_id = p.group_id WHERE ag.assign_user_id = ${userId}) AS group_access ON p.id = group_access.id
             LEFT JOIN(SELECT DISTINCT p.id FROM process p JOIN assign af ON af.folder_id = p.folder_id WHERE af.assign_user_id =  ${userId}) AS folder_access ON p.id = folder_access.id WHERE (a.assign_user_id =  ${userId} OR group_access.id IS NOT NULL OR folder_access.id IS NOT NULL )
-             ${filter.tags ? `AND p.tags LIKE '%${filter.tags}%'` : ''}
+             ${filter.tags ? `AND (p.tags LIKE '%${filter.tags}%' OR p.name LIKE '%${filter.tags}%')` : ''}
             `);
+
         return [...create, ...folderGroupAssign]
     }
 

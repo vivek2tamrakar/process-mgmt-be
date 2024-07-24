@@ -21,4 +21,10 @@ export class CommentService {
         return await this.commentsRepository.save(body)
     }
 
+    /* ------------------- comment list ---------------- */
+    public async commentList(processId: number): Promise<CommentsModel[]> {
+        this.log.info('get commnets list')
+        return await this.commentsRepository.commentList(processId)
+    }
+
 }

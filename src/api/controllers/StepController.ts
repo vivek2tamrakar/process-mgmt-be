@@ -4,7 +4,7 @@ import { Service } from "typedi";
 import { StepService } from "../services/StepService";
 import { StepModel } from "../models/StepModel";
 import { Response } from "express";
-import { allRoles, UserRoles } from "../enums/Users";
+import {  allRoles, UserRoles } from "../enums/Users";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/step')

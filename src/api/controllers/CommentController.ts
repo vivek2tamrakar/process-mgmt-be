@@ -1,4 +1,4 @@
-import { Authorized, Body, JsonController, Post } from "routing-controllers";
+import { Authorized, Body, Get, JsonController, Param, Post } from "routing-controllers";
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { CommentService } from "../services/CommentService";
@@ -12,6 +12,16 @@ export class CommentController {
     constructor(
         @Service() private commentService: CommentService
     ) {
+    }
+
+    @Authorized(allRoles)
+    @Get('/list/:processId')
+    @ResponseSchema(CommentsModel, {
+        description: 'comment list by process id ',
+        isArray:true
+    })
+    public async commentList(@Param('processId') processId: number): Promise<CommentsModel[]> {
+        return await this.commentService.commentList(processId)
     }
 
     @Authorized(allRoles)
