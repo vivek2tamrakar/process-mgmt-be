@@ -4,14 +4,14 @@ import { CommentsModel } from "../models/CommentsModel";
 @EntityRepository(CommentsModel)
 export class CommentsRepository extends Repository<CommentsModel> {
 
-    public async commentList(processId: number): Promise<CommentsModel[]> {
+    public async getCommentList(process_id): Promise<CommentsModel[] | any> {
         const qb = await this.createQueryBuilder('comments')
             .select([
-                'comments.id', 'comments.name', 'comments.createdAt', 'comments.updatedAt',
-                'user.id', 'user.name', 'user.email'
+                'comments.id', 'comments.name','comments.created_at',
+                'user.id', 'user.email','user.name'
             ])
             .leftJoin('comments.user', 'user')
-            .andWhere('comments.process_id =:processId', { processId: processId })
-        return qb.getMany()
+        const res = qb.andWhere('comments.process_id =:process_id', { process_id: process_id }).getMany();
+        return res;
     }
 }

@@ -2,7 +2,7 @@ import { Authorized, Body, Delete, Get, JsonController, Param, Patch, Post, Quer
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { ProcessService } from "../services/ProcessService";
-import { allRoles, UserRoles } from "../enums/Users";
+import {  allRoles, UserRoles } from "../enums/Users";
 import { ProcessModel } from "../models/ProcessModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
 import { Request, Response } from "express";

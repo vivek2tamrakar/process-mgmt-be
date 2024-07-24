@@ -4,6 +4,7 @@ import { Service } from "typedi";
 import { CommentService } from "../services/CommentService";
 import { CommentsModel } from "../models/CommentsModel";
 import { allRoles } from "../enums/Users";
+// import { allRoles } from "../enums/Users";
 
 @OpenAPI({ security: [{ bearerAuth: [] }] })
 @JsonController('/comment')
@@ -13,17 +14,7 @@ export class CommentController {
         @Service() private commentService: CommentService
     ) {
     }
-
-    @Authorized(allRoles)
-    @Get('/list/:processId')
-    @ResponseSchema(CommentsModel, {
-        description: 'comment list by process id ',
-        isArray:true
-    })
-    public async commentList(@Param('processId') processId: number): Promise<CommentsModel[]> {
-        return await this.commentService.commentList(processId)
-    }
-
+  
     @Authorized(allRoles)
     @Post('/')
     @ResponseSchema(CommentsModel, {
@@ -31,6 +22,14 @@ export class CommentController {
     })
     public async addComment(@Body() body: any): Promise<CommentsModel> {
         return await this.commentService.addComment(body)
+    }
+    // @Authorized(allRoles)
+    @Get('/:id')
+    @ResponseSchema(CommentsModel, {
+        description: 'Get comment '
+    })
+    public async getComment(@Param('id') id: number): Promise<CommentsModel[]> {
+        return await this.commentService.getComments(id)
     }
 
 

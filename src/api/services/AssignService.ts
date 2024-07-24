@@ -29,7 +29,7 @@ export class AssignService {
         const newAssignments = body?.assignUserId?.map((ele) => ({
             assignUserId: ele,
             [key]: value,
-            userId: body?.userId
+            userId: body?.userId ? body?.userId : 0
         }));
         return await this.assignRepository.save(newAssignments);
     }
