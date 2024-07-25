@@ -37,7 +37,7 @@ export class ProcessRepository extends Repository<ProcessModel> {
             // .leftJoin('process.group', 'group')
             // .leftJoin('process.user', 'user')
             .andWhere('process.id=:processId', { processId: processId })
-console.log('qb',qb.getQuery());
+        console.log('qb', qb.getQuery());
         return qb.getOne()
     }
 
@@ -70,15 +70,14 @@ console.log('qb',qb.getQuery());
     folder.name AS folderName
     FROM
     process
-    LEFT JOIN assign ON process.id = assign.process_id
-    LEFT JOIN users ON assign.user_id = users.id
-    LEFT JOIN \`group\` ON process.group_id = \`group\`.id
-    LEFT JOIN folder ON process.folder_id = folder.id
+    LEFT JOIN assign ON process.id = assign.process_id AND assign.deleted_at IS NULL
+    LEFT JOIN users ON assign.user_id = users.id AND users.deleted_at IS NULL
+    LEFT JOIN \`group\` ON process.group_id = \`group\`.id AND group.deleted_at IS NULL
+    LEFT JOIN folder ON process.folder_id = folder.id  AND folder.deleted_at IS NULL
 WHERE
-    process.user_id = ${userId}
+    process.user_id = ${userId} AND process.deleted_at IS NULL
     ${filter.tags ? `AND (process.tags LIKE '%${filter.tags}%' OR process.name LIKE '%${filter.tags}%')` : ''}
     `);
-
         // WHERE process.user_id = ${userId}
 
         // const qbCreate = await this.createQueryBuilder('process')
@@ -109,17 +108,22 @@ WHERE
             \`group\`.id AS groupId,
             \`group\`.name AS groupName
             FROM process p 
-            LEFT JOIN assign a ON p.id = a.process_id
-            LEFT JOIN users u  ON a.assign_user_id=u.id
-            LEFT JOIN folder f ON p.folder_id =f.id
-            LEFT JOIN \`group\` ON p.group_id = \`group\`.id
-            LEFT JOIN(SELECT DISTINCT process_id FROM assign WHERE assign_user_id =  ${userId}) AS direct_access ON p.id = direct_access.process_id
+            LEFT JOIN assign a ON p.id = a.process_id  AND a.deleted_at IS NULL
+            LEFT JOIN users u  ON a.assign_user_id=u.id  AND u.deleted_at IS NULL
+            LEFT JOIN folder f ON p.folder_id =f.id  AND f.deleted_at IS NULL
+            LEFT JOIN \`group\` ON p.group_id = \`group\`.id  AND \`group\`.deleted_at IS NULL
+
+            LEFT JOIN(SELECT DISTINCT process_id FROM assign WHERE assign_user_id =  ${userId}) AS direct_access ON p.id = direct_access.process_id 
             LEFT JOIN(SELECT DISTINCT p.id FROM process p
-               JOIN assign ag ON ag.group_id = p.group_id WHERE ag.assign_user_id = ${userId}) AS group_access ON p.id = group_access.id
-            LEFT JOIN(SELECT DISTINCT p.id FROM process p JOIN assign af ON af.folder_id = p.folder_id WHERE af.assign_user_id =  ${userId}) AS folder_access ON p.id = folder_access.id WHERE (a.assign_user_id =  ${userId} OR group_access.id IS NOT NULL OR folder_access.id IS NOT NULL )
+            JOIN assign ag ON ag.group_id = p.group_id WHERE ag.assign_user_id = ${userId}) AS group_access ON p.id = group_access.id
+            LEFT JOIN(SELECT DISTINCT p.id FROM process p 
+            JOIN assign af ON af.folder_id = p.folder_id WHERE af.assign_user_id =  ${userId}) AS folder_access ON p.id = folder_access.id WHERE (a.assign_user_id =  ${userId} OR group_access.id IS NOT NULL OR folder_access.id IS NOT NULL )
+            AND p.deleted_at IS NULL
              ${filter.tags ? `AND (p.tags LIKE '%${filter.tags}%' OR p.name LIKE '%${filter.tags}%')` : ''}
             `);
 
+
+        console.log(folderGroupAssign)
         return [...create, ...folderGroupAssign]
     }
 
