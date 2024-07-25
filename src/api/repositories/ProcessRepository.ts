@@ -29,22 +29,15 @@ export class ProcessRepository extends Repository<ProcessModel> {
         const qb = await this.createQueryBuilder('process')
             .select([
                 'process.id', 'process.name', 'process.groupId', 'process.folderId', 'process.tags',
-                'process.description', 'process.createdAt', 'process.updatedAt', 'process.tags', 'process.description', 'process.isReview', 'process.reviewDate',
-                'step.id', 'step.stepDescription',
-                'folder.id', 'folder.name',
-                'group.id', 'group.name',
-                'user.id', 'user.name',
-                'comment.id', 'comment.name', 'comment.userId', 'comment.createdAt', 'comment.updatedAt',
-                'commentedBy.id', 'commentedBy.name'
+                'process.description', 'process.createdAt', 'process.updatedAt', 'process.tags', 'process.description',
+                'step.id', 'step.stepDescription'
             ])
             .leftJoin('process.step', 'step')
-            .leftJoin('process.folder', 'folder')
-            .leftJoin('process.group', 'group')
-            .leftJoin('process.user', 'user')
-            .leftJoin('process.comment', 'comment')
-            .leftJoin('comment.user', 'commentedBy')
+            // .leftJoin('process.folder', 'folder')
+            // .leftJoin('process.group', 'group')
+            // .leftJoin('process.user', 'user')
             .andWhere('process.id=:processId', { processId: processId })
-
+console.log('qb',qb.getQuery());
         return qb.getOne()
     }
 

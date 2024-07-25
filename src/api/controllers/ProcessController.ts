@@ -2,7 +2,7 @@ import { Authorized, Body, Delete, Get, JsonController, Param, Patch, Post, Quer
 import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 import { Service } from "typedi";
 import { ProcessService } from "../services/ProcessService";
-import {  allRoles, UserRoles } from "../enums/Users";
+import {  UserRoles } from "../enums/Users";
 import { ProcessModel } from "../models/ProcessModel";
 import { DecodeTokenService } from "../services/DecodeTokenService";
 import { Request, Response } from "express";
@@ -22,7 +22,7 @@ export class ProcessController {
     ) {
     }
 
-    @Authorized(allRoles)
+    // @Authorized(allRoles)
     @Get('/search/:id')
     @ResponseSchema(ProcessModel, {
         description: 'search data',
@@ -32,7 +32,7 @@ export class ProcessController {
         return await this.processService.searchProcess(param, id)
     }
 
-    @Authorized(allRoles)
+    // @Authorized(allRoles)
     @Get('/:id')
     @ResponseSchema(ProcessModel, {
         description: 'get process data by id '
