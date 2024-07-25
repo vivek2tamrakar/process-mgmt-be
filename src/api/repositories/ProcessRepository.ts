@@ -8,7 +8,7 @@ export class ProcessRepository extends Repository<ProcessModel> {
         let assign, created;
         const qb = await this.createQueryBuilder('process')
             .select([
-                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt',
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt', 'process.isReview', 'process.reviewDate',
                 'step.id', 'step.stepDescription', 'step.isCompleted', 'step.lastReview', 'step.updatedAt',
                 'assign.id',
                 'user.id', 'user.email',
@@ -44,7 +44,7 @@ console.log('qb',qb.getQuery());
     public async getHomeData(userId: number): Promise<ProcessModel[]> {
         const qb = await this.createQueryBuilder('process')
             .select([
-                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description'
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.isReview', 'process.reviewDate',
             ])
         qb.andWhere('process.user_id =:userId', { userId: userId })
         qb.orderBy('process.created_at', 'DESC')
@@ -52,7 +52,6 @@ console.log('qb',qb.getQuery());
     }
 
     public async searchProcess(userId: number, filter: any): Promise<ProcessModel[] | any> {
-
         const create = await this.query(`SELECT
     process.id,
     process.name,
@@ -60,6 +59,8 @@ console.log('qb',qb.getQuery());
     process.tags,
     process.description,
     process.updated_at as updatedAt,
+    process.is_review as isReview,
+    process.review_date as reviewDate,
     process.deleted_at as deletedAt,
     users.id AS userId,
     users.email,
@@ -75,9 +76,8 @@ console.log('qb',qb.getQuery());
     LEFT JOIN folder ON process.folder_id = folder.id
 WHERE
     process.user_id = ${userId}
-    AND process.deleted_at IS NULL
-     ${filter.tags ? `AND process.tags LIKE '%${filter.tags}%'` : ''}
-       `);
+    ${filter.tags ? `AND (process.tags LIKE '%${filter.tags}%' OR process.name LIKE '%${filter.tags}%')` : ''}
+    `);
 
         // WHERE process.user_id = ${userId}
 
@@ -102,6 +102,7 @@ WHERE
         const folderGroupAssign = await this.query(`SELECT DISTINCT 
             p.id as id,p.name as name,p.user_id as userId ,p.group_id as groupId,p.folder_id as folderId,
             p.tags as tags,p.description as description ,p.created_at as createdAt,
+            p.is_review as isReview,p.review_date as reviewDate,
             p.updated_at as updatedAt,p.deleted_at as deletedAt,
             f.name as folderName,
             u.email as email,
@@ -116,9 +117,9 @@ WHERE
             LEFT JOIN(SELECT DISTINCT p.id FROM process p
                JOIN assign ag ON ag.group_id = p.group_id WHERE ag.assign_user_id = ${userId}) AS group_access ON p.id = group_access.id
             LEFT JOIN(SELECT DISTINCT p.id FROM process p JOIN assign af ON af.folder_id = p.folder_id WHERE af.assign_user_id =  ${userId}) AS folder_access ON p.id = folder_access.id WHERE (a.assign_user_id =  ${userId} OR group_access.id IS NOT NULL OR folder_access.id IS NOT NULL )
-            AND p.deleted_at IS NULL
-             ${filter.tags ? `AND p.tags LIKE '%${filter.tags}%'` : ''}
+             ${filter.tags ? `AND (p.tags LIKE '%${filter.tags}%' OR p.name LIKE '%${filter.tags}%')` : ''}
             `);
+
         return [...create, ...folderGroupAssign]
     }
 
