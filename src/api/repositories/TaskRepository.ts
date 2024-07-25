@@ -10,6 +10,7 @@ export class TaskRepository extends Repository<TaskModel> {
         const dayOfWeek = date.getDay();
         const qb = await this.createQueryBuilder('task')
             .andWhere('task.is_recurren =:isRecurren', { isRecurren: true })
+            .andWhere(`DATE_FORMAT(task.recurren_start_date ,'%y-%m-%d') <= DATE_FORMAT(:date, '%y-%m-%d')`)
             .andWhere(`(
                 DATE_FORMAT(task.recurren_end_date ,'%y-%m-%d') >= DATE_FORMAT(:endDate, '%y-%m-%d')
                 OR task.recurren_end_date IS NULL
