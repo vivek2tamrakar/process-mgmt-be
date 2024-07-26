@@ -48,4 +48,25 @@ export const ProcessMail = async (dbUser: any, data?: any) => {
     });
 };
 
+export const TaskMail = async (dbUser: any, data?: any) => {
+    let template;
+    template = 'TaskMail';
+    const helperOptions = {
+        from: env.email.userName,
+        to: dbUser,
+        subject: 'Task Assign Mail',
+        template,
+        context: {
+            task: data
+        }
+    };
+    Transport().sendMail(helperOptions, (error, info) => {
+        if (error) {
+            console.log(error);
+        }
+        console.log('email is send');
+        console.log(info);
+        return true;
+    });
+};
 

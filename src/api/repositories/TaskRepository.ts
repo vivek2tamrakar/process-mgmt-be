@@ -83,5 +83,18 @@ export class TaskRepository extends Repository<TaskModel> {
         return [...createTask, ...assignTask];
     }
 
+    public async sendEmail(userId: number, filter: any): Promise<TaskModel[]> {
+        const qb = await this.createQueryBuilder('task')
+            .select([
+                'task.id', 'task.name', 'task.description', 'task.duration', 'task.startDate', 'task.status', 'task.isDayTask', 'task.endDate',
+                'assignUsers.id', 'assignUsers.email', 'assignUsers.name',
+            ])
+            .leftJoin('task.user', 'assignUsers')
+            .andWhere('task.user_id =:userId', { userId: userId })
+        if (filter.date)
+            qb.andWhere(`DATE(task.start_date) =DATE(:date)`, { date: new Date() })
+        return await qb.getMany()
+    }
+
 
 }

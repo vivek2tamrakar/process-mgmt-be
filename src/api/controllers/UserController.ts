@@ -22,6 +22,7 @@ export class UserController {
     ) {
     }
 
+
     @Authorized(allRoles)
     @Get('/user-details/:id')
     @ResponseSchema(UserModel, {

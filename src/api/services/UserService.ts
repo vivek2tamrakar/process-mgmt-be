@@ -30,7 +30,6 @@ export class UserService {
             .getOne();
 
         return user;
-        // return await this.userRepository.findOne({ id: userId })
     }
 
     public async generateRandomPassword(length = 12) {
