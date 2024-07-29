@@ -37,7 +37,7 @@ export class TaskController {
         return await this.taskService.getTaskByUserId(id, param)
     }
 
-    @Authorized([UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN, UserRoles.COMPANY])
+    @Authorized(allRoles)
     @Post('/')
     @ResponseSchema(TaskModel, {
         description: 'add task',
