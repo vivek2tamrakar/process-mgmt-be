@@ -20,11 +20,11 @@ export class CommentService {
         if (commentData) throw new CommentError();
         return await this.commentsRepository.save(body)
     }
-    /* ------------------- add ommnet ---------------- */
+    
+    /* ------------------- get commnets ---------------- */
     public async getComments(processId): Promise<CommentsModel[]> {
-        this.log.info('add commnets')
+        this.log.info('get commnets')
         return  await this.commentsRepository.getCommentList(processId)
     }
 
-    /* ------------------- comment list ---------------- */
 }

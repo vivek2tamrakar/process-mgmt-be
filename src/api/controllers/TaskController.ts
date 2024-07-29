@@ -18,14 +18,23 @@ export class TaskController {
     ) {
     }
 
-    // @Authorized(allRoles)
+    @Authorized([UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN, UserRoles.COMPANY])
+    @Get('/send-email/:id')
+    @ResponseSchema(TaskModel, {
+        description: 'send email to the user',
+    })
+    public async sendEmail(@Param('id') id: number, @QueryParams() param: any, @Res() res: any): Promise<TaskModel[]> {
+        return await this.taskService.sendEmail(id, res, param)
+    }
+
+    @Authorized(allRoles)
     @Get('/:id')
     @ResponseSchema(TaskModel, {
         description: 'task assign and create by the user and get by user id',
         isArray: true
     })
-    public async getTaskByUserId(@Param('id') id: number,@QueryParams() param:any): Promise<TaskModel[]> {
-        return await this.taskService.getTaskByUserId(id,param)
+    public async getTaskByUserId(@Param('id') id: number, @QueryParams() param: any): Promise<TaskModel[]> {
+        return await this.taskService.getTaskByUserId(id, param)
     }
 
     @Authorized([UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN, UserRoles.COMPANY])
