@@ -18,7 +18,7 @@ export class TaskController {
     ) {
     }
 
-    @Authorized([UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN, UserRoles.COMPANY])
+    @Authorized([UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN, UserRoles.COMPANY,UserRoles.EMPLOYEE])
     @Get('/send-email/:id')
     @ResponseSchema(TaskModel, {
         description: 'send email to the user',
@@ -27,7 +27,7 @@ export class TaskController {
         return await this.taskService.sendEmail(id, res, param)
     }
 
-    @Authorized(allRoles)
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN,UserRoles.EMPLOYEE])
     @Get('/:id')
     @ResponseSchema(TaskModel, {
         description: 'task assign and create by the user and get by user id',
@@ -37,7 +37,7 @@ export class TaskController {
         return await this.taskService.getTaskByUserId(id, param)
     }
 
-    @Authorized(allRoles)
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN,UserRoles.EMPLOYEE])
     @Post('/')
     @ResponseSchema(TaskModel, {
         description: 'add task',
