@@ -57,8 +57,15 @@ export const TaskMail = async (dbUser: any, data?: any) => {
         subject: 'Task Assign Mail',
         template,
         context: {
-            task: data
-        }
+            task: 'Your assigned task details here'
+        },
+        attachments: [
+            {
+                filename: 'task.xlsx',
+                content: data,
+                encoding: 'base64'
+            }
+        ]
     };
     Transport().sendMail(helperOptions, (error, info) => {
         if (error) {
