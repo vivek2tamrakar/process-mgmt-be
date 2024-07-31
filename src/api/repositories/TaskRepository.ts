@@ -75,6 +75,8 @@ export class TaskRepository extends Repository<TaskModel> {
             qb.andWhere(`DATE(task.start_date) >= DATE(:today) AND DATE(task.start_date) <= DATE_ADD(DATE(:today), INTERVAL 7 DAY)`, { today: date });
         } else if (filter.monthly == 'true') {
             qb.andWhere(`DATE(task.start_date) >= DATE(:today) AND DATE(task.start_date) <=DATE_ADD(DATE(:today), INTERVAL 1 MONTH)`, { today: date });
+        } else if (filter?.startDate && filter?.endDate) {
+            qb.andWhere(`DATE(task.start_date) >= DATE(:startDate) AND DATE(task.end_date) <= DATE(:endDate)`, { startDate: filter.startDate, endDate: filter?.endDate });
         }
 
         const createdTaskClone = qb.clone()

@@ -27,7 +27,7 @@ export class TaskController {
         return await this.taskService.sendEmail(id, res, param)
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN,UserRoles.EMPLOYEE])
+    @Authorized(allRoles)
     @Get('/:id')
     @ResponseSchema(TaskModel, {
         description: 'task assign and create by the user and get by user id',

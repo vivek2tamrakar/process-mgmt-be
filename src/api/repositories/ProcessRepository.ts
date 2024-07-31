@@ -52,6 +52,11 @@ export class ProcessRepository extends Repository<ProcessModel> {
     }
 
     public async searchProcess(userId: number, filter: any): Promise<ProcessModel[] | any> {
+
+        // if (filter?.tags && filter?.tags[0] !== '#') {
+        //     return []
+        // }
+
         const create = await this.query(`SELECT
     process.id,
     process.name,

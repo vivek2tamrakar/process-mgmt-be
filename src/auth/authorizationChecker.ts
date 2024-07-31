@@ -10,7 +10,6 @@ export function authorizationChecker(connection: Connection): (action: Action, r
     const authService = Container.get<AuthService>(AuthService);
 
     return async function innerAuthorizationChecker(action: Action, roles: UserRoles[]): Promise<boolean> {
-
         const authUser :any= await authService.parseAuthFromRequest(action.request);
         if (authUser === undefined) {
             log.warn('Invalid credentials given');
