@@ -13,9 +13,21 @@ export const cronJobLoader: MicroframeworkLoader = async (settings: Microframewo
         const firstCronJob = new cron.CronJob(`0 12 * * *`, async () => {
             await taskService.createTaskWithCron();
         });
- 
+
+
+        /* run a cron every day at 9pm  */
+        const secondCron = new cron.CronJob(`0 21 * * * `, async () => {
+            await taskService.sendMailToAdmin();
+        })
+
+        // const thirdCron = new cron.CronJob(`* * * * *`, async () => {
+        //     await taskService.sendRemainderMail()
+        // })
+
         if (env.app.runCron) {
-            firstCronJob.start()
+            firstCronJob.start();
+            secondCron.start()
+            // thirdCron.start()
         }
 
     }

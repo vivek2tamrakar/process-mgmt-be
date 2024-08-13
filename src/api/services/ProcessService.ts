@@ -109,5 +109,11 @@ export class ProcessService {
 
     }
 
+    /* get process list*/
+    public async processList(groupId: number): Promise<ProcessModel[]> {
+        this.log.info(`get process list`)
+        return await this.processRepository.processList(groupId);
+    }
+
 
 }

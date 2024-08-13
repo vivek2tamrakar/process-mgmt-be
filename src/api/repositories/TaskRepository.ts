@@ -98,5 +98,38 @@ export class TaskRepository extends Repository<TaskModel> {
         return await qb.getMany()
     }
 
+    public async sendMailToAdmin(): Promise<TaskModel[]> {
+        const date = new Date();
+        const qb = await this.createQueryBuilder('task')
+            .select([
+                'task.name', 'task.description', 'task.isActive', 'task.duration', 'task.remainder',
+                'group.name',
+                'assignUsers.email', 'assignUsers.name',
+                'process.name', 'process.description'
+
+            ])
+            .leftJoin('task.group', 'group')
+            .leftJoin('task.user', 'assignUsers')
+            .leftJoin('task.process', 'process')
+        qb.andWhere(`DATE(task.start_date) = DATE(:today)`, { today: date });
+        return await qb.getMany()
+    }
+
+    public async sendRemainderMail(): Promise<TaskModel[]> {
+        const date = new Date();
+        const qb = await this.createQueryBuilder('task')
+        qb.andWhere(`DATE(task.start_date)=DATE(:date)`, { date: date })
+        return qb.getMany()
+    }
+
+    public async sendRemainder(taskReminderData): Promise<TaskModel> {
+        const qb = await this.createQueryBuilder('task')
+        const response: any = await Promise.all(taskReminderData.map(async (ele) => {
+            qb.andWhere(`DATE_FORMAT(task.start_date,'%y-%m-%d-%h-%i')=DATE_FORMAT(:date,'%y-%m-%d-%h-%i)`, { date: ele?.startDate })
+            return qb.getMany();
+        }))
+        return response.flat();
+
+    }
 
 }

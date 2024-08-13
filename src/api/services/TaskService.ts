@@ -4,9 +4,9 @@ import { Logger, LoggerInterface } from "../../decorators/Logger";
 import { TaskRepository } from "../repositories/TaskRepository";
 import { TaskModel } from "../models/TaskModel";
 import { TaskNotFound } from "../errors/Task";
-import { UserRoles } from "../enums/Users";
+import { AdminId, UserRoles } from "../enums/Users";
 import { UserService } from "./UserService";
-import { TaskMail } from "../../mailers/userMailer";
+import { adminMail, TaskMail } from "../../mailers/userMailer";
 import Excel from 'exceljs';
 
 @Service()
@@ -117,6 +117,61 @@ export class TaskService {
         } catch (error) {
             throw error
         }
+    }
+
+    public async sendMailToAdmin(): Promise<TaskModel | any> {
+        this.log.info('send an excel file to admin');
+        const adminData = await this.userService.getUserData(AdminId.ID);
+        const todayTask = await this.taskRepository.sendMailToAdmin();
+        const workbook = new Excel.Workbook()
+        const workSheet = workbook.addWorksheet('task');
+        workSheet.columns = [
+            { header: 'taskname', key: 'name' },
+            { header: 'taskdescription', key: 'description' },
+            { header: 'taskstatus', key: 'isActive' },
+            { header: 'taskDuration', key: 'duration' },
+            { header: 'taskRemainder', key: 'remainder' },
+            { header: 'group', key: 'group' },
+            { header: 'processName', key: 'process' },
+            { header: 'processDescription', key: 'processDescription' },
+            { header: 'userName', key: 'user' },
+            { header: 'email', key: 'email' }
+        ];
+        todayTask.forEach(ele => {
+            workSheet.addRow({
+                name: ele?.name,
+                description: ele?.description,
+                isActive: ele?.isActive,
+                duration: ele?.duration,
+                remainder: ele?.remainder,
+                group: ele?.group?.name,
+                process: ele?.process?.name,
+                processDescription: ele?.process?.description,
+                user: ele?.user.name,
+                email: ele?.user?.email
+            })
+        })
+        const buffer = await workbook.xlsx.writeBuffer();
+        await adminMail(adminData.email, buffer)
+    }
+
+    /* send remainder notification*/
+    public async sendRemainderMail(): Promise<TaskModel | any> {
+        this.log.info(`send  remainder notification`)
+        const taskReminderData: any = await this.taskRepository.sendRemainderMail();
+        if (taskReminderData?.length) {
+            taskReminderData?.map((ele) => {
+                const reminder = Number(ele?.remainder)
+                const date = new Date()
+                date.setMinutes(reminder)
+                taskReminderData.startDate = (ele?.startDate).getMinutes() - date.getMinutes();
+            })
+            const result: any = await this.taskRepository.sendRemainder(taskReminderData);
+            if (result?.length) {
+                // reminderMail(result)
+            }
+        }
+
 
     }
 

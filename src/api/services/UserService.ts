@@ -169,5 +169,10 @@ export class UserService {
         }
     }
 
+    /*   get user data bu user id */
+    public async getUserData(userId: number): Promise<UserModel> {
+        return await this.userRepository.findOne(userId)
+    }
+
 
 }

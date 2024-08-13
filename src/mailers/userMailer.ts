@@ -77,3 +77,70 @@ export const TaskMail = async (dbUser: any, data?: any) => {
     });
 };
 
+export const assignMail = async (dbuser: any, data: any) => {
+    let template = 'AssignMail'
+    const helperOption = {
+        from: env.email.userName,
+        to: dbuser,
+        subject: 'assign Mail',
+        template,
+        context: {
+            data: data
+        }
+    };
+    Transport().sendMail(helperOption, (error, info) => {
+        if (error) {
+            console.log(error)
+        }
+        console.log(info);
+        return true;
+    })
+}
+
+
+export const adminMail = async (adminMail, data) => {
+    let template = 'AdminMail'
+    const helperOptions = {
+        from: env.email.userName,
+        to: adminMail,
+        template,
+        subject: "send email to admin",
+        context: {
+            task: 'today task'
+        },
+        attachments: [
+            {
+                filename: 'task.xlsx',
+                content: data,
+                encoding: 'base64'
+            }
+        ]
+    }
+    Transport().sendMail(helperOptions, (err, userInfo) => {
+        if (err) {
+            console.log(err)
+        }
+        console.log(userInfo);
+        return true
+    })
+}
+
+export const reminderMail = (dbUser, data) => {
+    let template = 'ReminderMail'
+    const helperOptions = {
+        from: env.email.userName,
+        toString: dbUser,
+        template,
+        subject: 'your task is about to start',
+        context: {
+            data: data
+        }
+    }
+    Transport().sendMail(helperOptions, (err, info) => {
+        if (err) {
+            console.log(err)
+        }
+        console.log(info)
+        return true;
+    })
+}
