@@ -7,8 +7,22 @@
         {{!-- <p style="font-size:1.1em">Your are invited for project managemnt please complete your profile using this
             password <a>{{token}}</a></p> --}}
         <p style="font-size:1.1em">Your assign task is about to start </p>
-        <p style="font-size:1.1em">{{data.name}}</p>
-
+        <table style="border-collapse: collapse; width: 100%;">
+            <tr>
+                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">task Name</th>
+                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">description</th>
+                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">duration</th>
+                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">startDate</th>
+                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">endDate</th>
+            </tr>
+            <tr>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{data.name}}</td>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{data.description}}</td>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{data.duration}}</td>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{data.startDate}}</td>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{data.endDate}}</td>
+            </tr>
+        </table>
         <br />
         <p style="font-size:0.9em;">Thanks,<br />Project Manaement</p>
         <hr style="border:none;border-top:1px solid #eee" />

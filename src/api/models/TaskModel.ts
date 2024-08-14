@@ -40,9 +40,13 @@ export class TaskModel extends BaseEntity {
     public status: number;
 
     @IsOptional()
+    @Column({ name: 'is_checklist' })
+    public isChecklist: boolean
+
+    @IsOptional()
     @Column({ name: 'start_date' })
     public startDate: Date;
-    
+
     @IsOptional()
     @Column({ name: 'is_recurren' })
     public isRecurren: boolean;
@@ -108,7 +112,7 @@ export class TaskModel extends BaseEntity {
     @OneToOne(type => ProcessModel, processModel => processModel.id)
     public process: ProcessModel;
 
-    @Type(() =>UserModel )
+    @Type(() => UserModel)
     @OneToOne(type => UserModel, userModel => userModel.task, { cascade: true })
     @JoinColumn({ name: 'user_id' })
     public userModel: UserModel;

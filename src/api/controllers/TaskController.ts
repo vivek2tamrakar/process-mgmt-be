@@ -18,7 +18,7 @@ export class TaskController {
     ) {
     }
 
-    @Authorized([UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN, UserRoles.COMPANY,UserRoles.EMPLOYEE])
+    @Authorized([UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN, UserRoles.COMPANY, UserRoles.EMPLOYEE])
     @Get('/send-email/:id')
     @ResponseSchema(TaskModel, {
         description: 'send email to the user',
@@ -26,6 +26,16 @@ export class TaskController {
     public async sendEmail(@Param('id') id: number, @QueryParams() param: any, @Res() res: any): Promise<TaskModel[]> {
         return await this.taskService.sendEmail(id, res, param)
     }
+
+    // @Authorized(allRoles)
+    @Get('/id/:id')
+    @ResponseSchema(TaskModel, {
+        description: 'get task data by taskId',
+    })
+    public async getTaskDataByTaskId(@Param('id') id: number): Promise<TaskModel> {
+        return await this.taskService.getTaskDataByTaskId(id)
+    }
+
 
     @Authorized(allRoles)
     @Get('/:id')
@@ -37,7 +47,7 @@ export class TaskController {
         return await this.taskService.getTaskByUserId(id, param)
     }
 
-    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN,UserRoles.EMPLOYEE])
+    @Authorized([UserRoles.COMPANY, UserRoles.TASKMANAGER, UserRoles.MANAGER, UserRoles.ADMIN, UserRoles.EMPLOYEE])
     @Post('/')
     @ResponseSchema(TaskModel, {
         description: 'add task',

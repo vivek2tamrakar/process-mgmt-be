@@ -6,7 +6,7 @@ import { TaskModel } from "../models/TaskModel";
 import { TaskNotFound } from "../errors/Task";
 import { AdminId, UserRoles } from "../enums/Users";
 import { UserService } from "./UserService";
-import { adminMail, TaskMail } from "../../mailers/userMailer";
+import { adminMail, reminderMail, TaskMail } from "../../mailers/userMailer";
 import Excel from 'exceljs';
 
 @Service()
@@ -22,6 +22,13 @@ export class TaskService {
     /* ----------------------add  task  ------------ */
     public async addTask(body: any): Promise<TaskModel> {
         this.log.info(`add task`)
+        const date = new Date();
+
+        const receiveDate = new Date(body?.startDate);
+        const fomatedDate = new Date(receiveDate.setHours(date.getHours(), date.getMinutes(), date.getSeconds()));
+        const receieveEndDate = new Date(body?.endDate);
+        const formatEndDate = new Date(receieveEndDate.setHours(date.getHours(), date.getMinutes(), date.getSeconds()));
+
         let modifyData = body?.userId?.map((ele) => {
             return {
                 groupId: body?.groupId,
@@ -29,8 +36,8 @@ export class TaskService {
                 description: body?.description,
                 userId: ele,
                 processId: body?.processId,
-                startDate: body?.startDate,
-                endDate: body?.endDate,
+                startDate: fomatedDate,
+                endDate: formatEndDate,
                 duration: body?.duration,
                 isProcess: body?.isProcess,
                 isDayTask: body?.isDayTask,
@@ -59,6 +66,7 @@ export class TaskService {
             isTaskExist.startDate = body?.startDate;
             isTaskExist.endDate = body?.endDate;
             isTaskExist.duration = body?.duration;
+            isTaskExist.isChecklist = body?.isChecklist;
         }
         return await this.taskRepository.save(isTaskExist);
     }
@@ -161,18 +169,34 @@ export class TaskService {
         const taskReminderData: any = await this.taskRepository.sendRemainderMail();
         if (taskReminderData?.length) {
             taskReminderData?.map((ele) => {
-                const reminder = Number(ele?.remainder)
-                const date = new Date()
-                date.setMinutes(reminder)
-                taskReminderData.startDate = (ele?.startDate).getMinutes() - date.getMinutes();
+                const reminder = Number(ele?.remainder);
+                const newStartDate = new Date();
+                newStartDate.setMinutes(reminder + newStartDate.getMinutes());
+                ele.startDate = newStartDate;
             })
             const result: any = await this.taskRepository.sendRemainder(taskReminderData);
             if (result?.length) {
-                // reminderMail(result)
+                await Promise.all(result?.map(async (ele) => {
+                    const userData = await this.userService.getUserData(ele?.userId)
+                    ele.startDate = await this.formatDate(ele?.startDate);
+                    ele.endDate = await this.formatDate(ele?.endDate)
+                    await reminderMail(userData?.email, ele)
+                }))
             }
         }
-
-
     }
+
+    public async formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toDateString();
+    };
+
+    /* ------------------- get task data by task id ----------- */
+    public async getTaskDataByTaskId(taskId: number): Promise<TaskModel> {
+        this.log.info(`get task data by task id${taskId}`)
+        return await this.taskRepository.getTaskDataByTaskId(taskId);
+    }
+
+
 
 }

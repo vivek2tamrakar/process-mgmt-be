@@ -122,14 +122,28 @@ export class TaskRepository extends Repository<TaskModel> {
         return qb.getMany()
     }
 
-    public async sendRemainder(taskReminderData): Promise<TaskModel> {
-        const qb = await this.createQueryBuilder('task')
+    public async sendRemainder(taskReminderData): Promise<TaskModel[]> {
         const response: any = await Promise.all(taskReminderData.map(async (ele) => {
-            qb.andWhere(`DATE_FORMAT(task.start_date,'%y-%m-%d-%h-%i')=DATE_FORMAT(:date,'%y-%m-%d-%h-%i)`, { date: ele?.startDate })
+            const qb = await this.createQueryBuilder('task');
+            qb.andWhere(`DATE_FORMAT(task.start_date, '%y-%m-%d-%h-%i') = DATE_FORMAT(:date, '%y-%m-%d-%h-%i')`, { date: ele?.startDate });
             return qb.getMany();
-        }))
+        }));
         return response.flat();
-
     }
 
+
+    public async getTaskDataByTaskId(taskId: number): Promise<TaskModel> {
+        const qb = await this.createQueryBuilder('task')
+            .select([
+                'task',
+                'group.id', 'group.name',
+                'assignUsers.id', 'assignUsers.email', 'assignUsers.name',
+                'process.id', 'process.name', 'process.description', 'process.tags'
+            ])
+            .leftJoin('task.group', 'group')
+            .leftJoin('task.user', 'assignUsers')
+            .leftJoin('task.process', 'process')
+            .andWhere('task.id=:taskId', { taskId: taskId })
+        return qb.getOne();
+    }
 }

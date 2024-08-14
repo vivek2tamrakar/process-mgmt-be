@@ -129,7 +129,7 @@ export const reminderMail = (dbUser, data) => {
     let template = 'ReminderMail'
     const helperOptions = {
         from: env.email.userName,
-        toString: dbUser,
+        to: dbUser,
         template,
         subject: 'your task is about to start',
         context: {
