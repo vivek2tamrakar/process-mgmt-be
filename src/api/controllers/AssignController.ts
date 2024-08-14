@@ -24,7 +24,6 @@ export class AssignController {
         isArray: true
     })
     public async groupList(@Param('userId') userId:number,@Req() req: Request): Promise<AssignModel[]> {
-        // const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
         return await this.assignService.groupList(userId);
     }
 
@@ -35,10 +34,7 @@ export class AssignController {
         isArray: true
     })
     public async processList(@Param('userId') userId:number,@Req() req: Request): Promise<AssignModel[]> {
-        // const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
-        // return await this.assignService.processList(decodedToken?.id);
         return await this.assignService.processList(userId);
-
     }
 
     @Authorized(allRoles)
@@ -68,8 +64,6 @@ export class AssignController {
         description: 'assign group'
     })
     public async editMembers(@Body() body: any, @Req() req: Request): Promise<AssignModel> {
-        // const decodedToken = await this.decodeTokenService.Decode(req.headers['authorization'])
-        // body.userId = decodedToken?.id;
         return await this.assignService.editMembers(body);
     }
 

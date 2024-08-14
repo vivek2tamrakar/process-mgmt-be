@@ -132,4 +132,11 @@ WHERE
         return [...create, ...folderGroupAssign]
     }
 
+    public async processList(groupId: number): Promise<ProcessModel[]> {
+        const qb = await this.createQueryBuilder('process')
+            .select(['process.id', 'process.name'])
+            .andWhere('process.group_id =:groupId', { groupId: groupId })
+        return qb.getMany()
+    }
+
 }

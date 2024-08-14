@@ -86,4 +86,8 @@ export class GroupService {
         return { group, folder, process }
     }
 
+    public async getGroupDataById(groupId: number): Promise<GroupModel> {
+        this.log.info(`get group data by group id`);
+        return await this.groupRepository.findOne(groupId);
+    }
 }

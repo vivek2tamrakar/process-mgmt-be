@@ -44,6 +44,11 @@ export class FolderService {
         return res.status(200).send({ sucess: true, MESSAGE: 'SUCCESSFULLY_DELETE' })
     }
 
+    public async getFolderDataById(folderId: number): Promise<FolderModel> {
+        this.log.info(`get folder data by folder id`)
+        return await this.folderRepository.findOne(folderId);
+    }
+
 
 
 

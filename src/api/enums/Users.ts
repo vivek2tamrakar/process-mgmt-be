@@ -15,5 +15,10 @@ export enum UserRolesId {
     EMPLOYEEID = 5
 }
 
+export enum AdminId {
+    ID = 1
+}
+
+
 
 
