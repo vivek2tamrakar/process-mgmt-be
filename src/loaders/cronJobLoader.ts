@@ -20,14 +20,14 @@ export const cronJobLoader: MicroframeworkLoader = async (settings: Microframewo
             await taskService.sendMailToAdmin();
         })
 
-        // const thirdCron = new cron.CronJob(`* * * * *`, async () => {
-        //     await taskService.sendRemainderMail()
-        // })
+        const thirdCron = new cron.CronJob(`* * * * *`, async () => {
+            await taskService.sendRemainderMail()
+        })
 
         if (env.app.runCron) {
             firstCronJob.start();
             secondCron.start()
-            // thirdCron.start()
+            thirdCron.start()
         }
 
     }
