@@ -46,6 +46,12 @@ export class ProcessService {
         this.log.info(`get process data by id ${processId}`)
         return await this.processRepository.processDataById(processId)
     }
+    public async processDataByGroupId(groupId:number): Promise<ProcessModel[]| any> {
+        this.log.info(`get process data by id ${groupId}`)
+        const process = await this.processRepository.processDataByGroupId(groupId)
+        console.log('process by group id',process);
+        return process;
+    }
 
     /* ---------------- update process --------------- */
     public async updateProcess(body): Promise<ProcessModel | any> {
