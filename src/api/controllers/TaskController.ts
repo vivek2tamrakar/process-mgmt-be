@@ -27,7 +27,7 @@ export class TaskController {
         return await this.taskService.sendEmail(id, res, param)
     }
 
-    // @Authorized(allRoles)
+    @Authorized(allRoles)
     @Get('/id/:id')
     @ResponseSchema(TaskModel, {
         description: 'get task data by taskId',
@@ -54,6 +54,15 @@ export class TaskController {
     })
     public async addTask(@Body() body: any): Promise<TaskModel> {
         return await this.taskService.addTask(body)
+    }
+
+    @Authorized(allRoles)
+    @Patch('/re-assign')
+    @ResponseSchema(TaskModel, {
+        description: 're assign  task',
+    })
+    public async reassignTask(@Body() body: any, @Res() res: any): Promise<TaskModel> {
+        return await this.taskService.reassignTask(body, res)
     }
 
     @Authorized(allRoles)
