@@ -40,7 +40,25 @@ export class ProcessRepository extends Repository<ProcessModel> {
         console.log('qb', qb.getQuery());
         return qb.getOne()
     }
+    public async processDataByGroupId(groupId: number): Promise<ProcessModel[] | any> {
+        let assign, created;
+        const qb = await this.createQueryBuilder('process')
+            .select([
+                'process.id', 'process.name', 'process.createdAt', 'process.tags', 'process.description', 'process.updatedAt', 'process.isReview', 'process.reviewDate'
+            ])
+            .leftJoin('process.folder', 'folder')
+            // .andWhere('process.group_id IS NULL')
+            // .andWhere('process.folder_id IS NULL')
+        const createdQuery = qb.clone();
+        console.log('qb', qb.getQuery());
+        created = await createdQuery.andWhere('process.group_id =:groupId', { groupId: groupId }).getMany();
+        const assignQuery = qb.clone();
 
+        console.log('qb', qb.getQuery());
+        assign = await assignQuery.andWhere('folder.group_id=:groupId', { groupId: groupId }).getMany();
+        let mergedArray = [...created, ...assign];
+        return mergedArray
+    }
     public async getHomeData(userId: number): Promise<ProcessModel[]> {
         const qb = await this.createQueryBuilder('process')
             .select([
@@ -81,7 +99,7 @@ export class ProcessRepository extends Repository<ProcessModel> {
     LEFT JOIN folder ON process.folder_id = folder.id  AND folder.deleted_at IS NULL
 WHERE
     process.user_id = ${userId} AND process.deleted_at IS NULL
-    ${filter.tags ? `AND (process.tags LIKE '%${filter.tags}%' OR process.name LIKE '%${filter.tags}%')` : ''}
+    ${filter.tags ? `AND (process.tags LIKE '#%${filter.tags}%' OR process.name LIKE '%${filter.tags}%')` : ''}
     `);
         // WHERE process.user_id = ${userId}
 

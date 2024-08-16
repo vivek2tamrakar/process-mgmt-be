@@ -51,6 +51,15 @@ export class ProcessController {
         return await this.processService.processDataById(id);
     }
 
+    // @Authorized(allRoles)
+    @Get('/groups/:id')
+    @ResponseSchema(ProcessModel, {
+        description: 'get process data by group id  '
+    })
+    public async processDataByGroupId(@Param('id') id: number): Promise<ProcessModel[]> {
+        return await this.processService.processDataByGroupId(id);
+    }
+
     @Post('/add-image')
     @UseBefore(multer(fileUploadOptions).fields([
         { maxCount: 1, name: 'image' },
