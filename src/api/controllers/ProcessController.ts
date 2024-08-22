@@ -25,7 +25,7 @@ export class ProcessController {
     @Authorized(allRoles)
     @Get('/list/:id')
     @ResponseSchema(ProcessModel, {
-        description: 'get process list whse created bu user',
+        description: 'get process list by group id',
         isArray: true
     })
     public async ProcessList(@Param('id') id: number): Promise<ProcessModel[]> {

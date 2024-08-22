@@ -1,6 +1,6 @@
 import { Exclude, Type } from "class-transformer";
 import { IsNotEmpty, IsOptional } from "class-validator";
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { GroupModel } from "./GroupModel";
 import { UserModel } from "./UserModel";
 import { ProcessModel } from "./ProcessModel";
@@ -92,11 +92,11 @@ export class TaskModel extends BaseEntity {
     public readonly createdAt: Date;
 
     @Exclude({ toClassOnly: true })
-    @CreateDateColumn({ name: 'updated_at' })
+    @UpdateDateColumn({ name: 'updated_at' })
     public readonly updatedAt: Date;
 
     @Exclude({ toClassOnly: true })
-    @CreateDateColumn({ name: 'deleted_at' })
+    @DeleteDateColumn({ name: 'deleted_at' })
     public readonly deletedAt: Date;
 
     @Type(() => GroupModel)

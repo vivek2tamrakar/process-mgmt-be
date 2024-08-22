@@ -74,7 +74,7 @@ export class TaskService {
     /* ---------------------- delete task ------------ */
     public async deleteTask(taskId: number, res: any): Promise<TaskModel> {
         this.log.info(`delete task by ${taskId}`)
-        await this.taskRepository.softDelete({ id: taskId })
+        await this.taskRepository.softDelete(taskId)
         return res.status(200).send({ sucess: true, MESSAGE: 'SUCCESSFULLY_DELETE' })
     }
 
@@ -197,6 +197,30 @@ export class TaskService {
         return await this.taskRepository.getTaskDataByTaskId(taskId);
     }
 
+
+    /* ----------------------update task  ------------ */
+    public async reassignTask(body, res: any): Promise<TaskModel | any> {
+        this.log.info(`update task`)
+        let isTaskExist = await this.taskRepository.findOne({ id: body?.id });
+        if (!isTaskExist) throw new TaskNotFound()
+        const obj = await Promise.all(body?.userId?.map((ele) => {
+            return {
+                groupId: isTaskExist?.groupId,
+                createdId: isTaskExist?.createdId,
+                name: isTaskExist?.name,
+                description: isTaskExist?.description,
+                userId: ele,
+                processId: isTaskExist?.processId,
+                startDate: isTaskExist.startDate,
+                endDate: isTaskExist?.endDate,
+                duration: isTaskExist?.duration,
+                remainder: isTaskExist?.remainder,
+                isDayTask: isTaskExist?.isDayTask,
+                isProcess: isTaskExist?.isProcess,
+            }
+        }))
+        return await this.taskRepository.save(obj);
+    }
 
 
 }
