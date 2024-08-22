@@ -10,27 +10,27 @@ export class TaskRepository extends Repository<TaskModel> {
         const dayOfWeek = date.getDay();
         const qb = await this.createQueryBuilder('task')
             .andWhere('task.is_recurren =:isRecurren', { isRecurren: true })
-            .andWhere(`DATE_FORMAT(task.recurren_start_date ,'%y-%m-%d') <= DATE_FORMAT(:date, '%y-%m-%d')`)
+            .andWhere(`DATE_FORMAT(task.recurren_start_date ,'%y-%m-%d') <= DATE_FORMAT(:date, '%y-%m-%d')`, { date: date })
             .andWhere(`(
                 DATE_FORMAT(task.recurren_end_date ,'%y-%m-%d') >= DATE_FORMAT(:endDate, '%y-%m-%d')
                 OR task.recurren_end_date IS NULL
             )`,
                 { endDate: date })
 
-        const yearClone = qb.clone();
+        const yearClone = await qb.clone();
         const yearCreateTask = await yearClone.andWhere('task.recurren_type =:yearly', { yearly: Task.YEARLY })
             .andWhere(`DATE_FORMAT(task.recurren_start_date, '%m-%d') =DATE_FORMAT(:startDate,'%m-%d')`, { startDate: date })
             .getMany();
 
-        const monthClone = qb.clone();
+        const monthClone = await qb.clone();
         const monthlyCreateTask = await monthClone.andWhere('task.recurren_type =:monthly', { monthly: Task.MONTHLY })
             .andWhere(`DATE_FORMAT(task.recurren_start_date,'%d') >=DATE_FORMAT(:endDate,'%d')`, { endDate: date })
             .getMany();
 
-        const everyDayClone = qb.clone();
+        const everyDayClone = await qb.clone();
         const everyDayCreateTask = await everyDayClone.andWhere('task.recurren_type =:weekly', { weekly: Task.DAILY }).getMany();
 
-        const weeklyClone = qb.clone();
+        const weeklyClone = await qb.clone();
         const WeekDayCreateTask = await weeklyClone.andWhere('task.recurren_type =:weekly', { weekly: Task.WEEKLY })
             .andWhere('DAYOFWEEK(task.recurren_start_date) = :dayOfWeek', { dayOfWeek: dayOfWeek + 1 })
             .getMany();
@@ -53,7 +53,8 @@ export class TaskRepository extends Repository<TaskModel> {
             isProcess: ele?.isProcess,
             isRecurren: false
         }))
-        await getRepository(TaskModel).save(modifyData);
+        if (modifyData?.length)
+            await getRepository(TaskModel).save(modifyData);
     }
 
     public async getTaskByUserId(userId: number, filter: any): Promise<TaskModel[]> {
